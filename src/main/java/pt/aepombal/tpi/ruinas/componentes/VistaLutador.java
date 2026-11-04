@@ -1,6 +1,8 @@
 package pt.aepombal.tpi.ruinas.componentes;
 
 import javafx.scene.Group;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -8,8 +10,14 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeLineCap;
+import javafx.scene.transform.Scale;
 import pt.aepombal.tpi.ruinas.modelo.AcaoCombate;
 import pt.aepombal.tpi.ruinas.modelo.LadoLutador;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Representação vetorial temporária de um lutador.
@@ -18,6 +26,8 @@ import pt.aepombal.tpi.ruinas.modelo.LadoLutador;
 public final class VistaLutador extends Group {
 
     private final Group corpo = new Group();
+    private static final Map<AcaoCombate, List<Image>> SPRITES = carregarSprites();
+    private final ImageView sprite = new ImageView();
     private final Line bracoTras = membro();
     private final Line bracoFrente = membro();
     private final Line pernaTras = membro();
@@ -27,6 +37,7 @@ public final class VistaLutador extends Group {
     private int orientacao;
 
     public VistaLutador(LadoLutador lado) {
+        getTransforms().add(new Scale(ComponenteLutador.ESCALA, ComponenteLutador.ESCALA, 0, 0));
         orientacao = lado.orientacao();
         Color principal = lado == LadoLutador.JOGADOR
                 ? Color.web("#27D8FF") : Color.web("#FF4E68");
@@ -65,7 +76,11 @@ public final class VistaLutador extends Group {
                 olho, pernaFrente, bracoFrente, maoTras, maoFrente);
         corpo.setEffect(new DropShadow(8, Color.color(0, 0, 0, 0.65)));
 
-        getChildren().add(corpo);
+        sprite.setX(-32);
+        sprite.setY(0);
+        sprite.setFitWidth(128);
+        sprite.setFitHeight(112);
+        getChildren().addAll(corpo, sprite);
         mostrar(AcaoCombate.IDLE, 0);
     }
 
@@ -73,18 +88,37 @@ public final class VistaLutador extends Group {
     public void olharPara(int novaOrientacao) {
         orientacao = novaOrientacao < 0 ? -1 : 1;
         corpo.setScaleX(orientacao);
-        corpo.setTranslateX(orientacao < 0 ? ComponenteLutador.LARGURA : 0);
+        corpo.setTranslateX(orientacao < 0 ? 64 : 0);
+        sprite.setScaleX(orientacao);
     }
 
     /** Ajusta a silhueta ao estado e ao frame lógico atuais. */
+    public void inclinarSalto(double graus) {
+        sprite.setRotate(graus);
+    }
+
     public void mostrar(AcaoCombate acao, int frame) {
+        List<Image> imagens = SPRITES.get(acao);
+        boolean temSprite = imagens != null && !imagens.isEmpty();
+        // Os novos frames baixos já estão alinhados na tela comum.
+        sprite.setX(-32);
+        sprite.setY(0);
+        sprite.setFitWidth(128);
+        sprite.setFitHeight(112);
+        sprite.setVisible(temSprite);
+        corpo.setVisible(!temSprite);
+        sprite.setScaleX(orientacao);
+        if (temSprite) {
+            sprite.setImage(imagens.get(Math.min(Math.max(frame, 0), imagens.size() - 1)));
+            return;
+        }
         reporPose();
 
         switch (acao) {
             case WALK_FORWARD, WALK_BACKWARD -> poseAndar(frame);
-            case JUMP -> poseSalto();
+            case JUMP, JUMP_SIDE -> poseSalto();
             case BLOCK, GUARD -> poseBloqueio(false);
-            case LOW_BLOCK -> poseBloqueio(true);
+            case LOW_BLOCK, CROUCH -> poseBloqueio(true);
             case LP, MP, HP -> poseSoco(acao == AcaoCombate.HP);
             case LK, MK, HK -> posePontape(acao == AcaoCombate.HK);
             case HIT -> corpo.setRotate(-10 * orientacao);
@@ -96,11 +130,29 @@ public final class VistaLutador extends Group {
         }
     }
 
+    private static Map<AcaoCombate, List<Image>> carregarSprites() {
+        Map<AcaoCombate, List<Image>> sprites = new EnumMap<>(AcaoCombate.class);
+        for (AcaoCombate acao : AcaoCombate.values()) {
+            List<Image> imagens = new ArrayList<>();
+            for (int i = 1; ; i++) {
+                String caminho = acao.caminhoFrame(i);
+                try (InputStream ficheiro = VistaLutador.class.getResourceAsStream(caminho)) {
+                    if (ficheiro == null) break;
+                    imagens.add(new Image(ficheiro));
+                } catch (java.io.IOException e) {
+                    break;
+                }
+            }
+            sprites.put(acao, imagens);
+        }
+        return sprites;
+    }
+
     private void reporPose() {
         corpo.setScaleX(orientacao);
         corpo.setRotate(0);
         corpo.setTranslateY(0);
-        corpo.setTranslateX(orientacao < 0 ? ComponenteLutador.LARGURA : 0);
+        corpo.setTranslateX(orientacao < 0 ? 64 : 0);
         definir(bracoTras, maoTras, 20, 42, 8, 64);
         definir(bracoFrente, maoFrente, 43, 42, 57, 62);
         definir(pernaTras, null, 24, 69, 17, 103);

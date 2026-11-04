@@ -18,6 +18,7 @@ import java.util.TreeMap;
 public final class RepositorioFrames {
 
     private static final int COLUNAS = 12;
+    private static final double MULTIPLICADOR_DURACAO = 1.5;
 
     /** Carrega as animações definidas no caminho indicado. */
     public Map<AcaoCombate, DefinicaoAnimacao> carregar(Path ficheiro)
@@ -60,8 +61,26 @@ public final class RepositorioFrames {
     private Map<AcaoCombate, DefinicaoAnimacao> criarDefinicoes(
             Map<AcaoCombate, TreeMap<Integer, ConstrutorFrame>> porAcao) {
         Map<AcaoCombate, DefinicaoAnimacao> resultado = new EnumMap<>(AcaoCombate.class);
-        porAcao.forEach((acao, frames) -> resultado.put(acao,
-                new DefinicaoAnimacao(acao, frames.values().stream().map(ConstrutorFrame::construir).toList())));
+        porAcao.forEach((acao, frames) -> {
+            List<FrameCombate> sequencia = frames.values().stream().map(ConstrutorFrame::construir).toList();
+            if (acao.eAtaque() && sequencia.size() == 1) {
+                FrameCombate pose = sequencia.getFirst();
+                List<CaixaFrame> corpo = pose.caixas().stream()
+                        .filter(caixa -> caixa.tipo() != TipoCaixa.HIT).toList();
+                int arranque = acao.nivelForca() == 1 ? 4 : 6;
+                int recuperacao = acao.nivelForca() == 1 ? 8 : 12;
+                sequencia = List.of(new FrameCombate(arranque, corpo),
+                        new FrameCombate(4, pose.caixas()), new FrameCombate(recuperacao, corpo));
+            }
+            if (sequencia.size() > 1) {
+                sequencia = sequencia.stream()
+                        .map(frame -> new FrameCombate(
+                                (int) Math.ceil(frame.duracaoFrames() * MULTIPLICADOR_DURACAO),
+                                frame.caixas()))
+                        .toList();
+            }
+            resultado.put(acao, new DefinicaoAnimacao(acao, sequencia));
+        });
         return Map.copyOf(resultado);
     }
 

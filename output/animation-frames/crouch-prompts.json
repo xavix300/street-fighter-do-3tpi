@@ -1,0 +1,149 @@
+{
+  "tool": "image_gen built-in",
+  "tasks": [
+    {
+      "action": "crouch_lp",
+      "phase": 2,
+      "source": "lp/lp_001.webp",
+      "prompt": "Use case: identity-preserve. Asset: ONE individual full-body transparent PNG photographic fighting game animation frame. Reference 1 defines exact person, clothes, face, shoes and LOW CROUCH neutral posture. Reference 2 defines standing attack to adapt. User requested a CROUCHING VERSION of that move, not a recreation of an unseen photograph. Move: short straight lead-hand jab at crouching chest height; rear hand guards torso; stay in squat. Phase 2/6: START: just begin weight transfer and striking limb motion, 15 percent of the path from squat to impact. Keep identity, hair, black shirt and existing emblems/lettering, dark trousers, navy sneakers with white soles, original proportions. Both phases before and after this remain in low crouch, never stand up. Face and move RIGHT. Same camera and lighting. Grounded supporting foot does not move; head remains substantially lower than standing head. Full body all fingers and shoes within transparent margins. Realistic sharp contours, no floor, no shadow, no labels, no other people, true transparent alpha."
+    },
+    {
+      "action": "crouch_lp",
+      "phase": 3,
+      "source": "lp/lp_001.webp",
+      "prompt": "Use case: identity-preserve. Asset: ONE individual full-body transparent PNG photographic fighting game animation frame. Reference 1 defines exact person, clothes, face, shoes and LOW CROUCH neutral posture. Reference 2 defines standing attack to adapt. User requested a CROUCHING VERSION of that move, not a recreation of an unseen photograph. Move: short straight lead-hand jab at crouching chest height; rear hand guards torso; stay in squat. Phase 3/6: PREPARATION: striking elbow or knee clearly flexed, compact loaded pose immediately before extension, 55 percent toward impact. Keep identity, hair, black shirt and existing emblems/lettering, dark trousers, navy sneakers with white soles, original proportions. Both phases before and after this remain in low crouch, never stand up. Face and move RIGHT. Same camera and lighting. Grounded supporting foot does not move; head remains substantially lower than standing head. Full body all fingers and shoes within transparent margins. Realistic sharp contours, no floor, no shadow, no labels, no other people, true transparent alpha."
+    },
+    {
+      "action": "crouch_lp",
+      "phase": 4,
+      "source": "lp/lp_001.webp",
+      "prompt": "Use case: identity-preserve. Asset: ONE individual full-body transparent PNG photographic fighting game animation frame. Reference 1 defines exact person, clothes, face, shoes and LOW CROUCH neutral posture. Reference 2 defines standing attack to adapt. User requested a CROUCHING VERSION of that move, not a recreation of an unseen photograph. Move: short straight lead-hand jab at crouching chest height; rear hand guards torso; stay in squat. Phase 4/6: IMPACT: unmistakably clear fully extended striking limb, readable original strike silhouette in lowered crouching stance, realistic joint limits. Keep identity, hair, black shirt and existing emblems/lettering, dark trousers, navy sneakers with white soles, original proportions. Both phases before and after this remain in low crouch, never stand up. Face and move RIGHT. Same camera and lighting. Grounded supporting foot does not move; head remains substantially lower than standing head. Full body all fingers and shoes within transparent margins. Realistic sharp contours, no floor, no shadow, no labels, no other people, true transparent alpha."
+    },
+    {
+      "action": "crouch_lp",
+      "phase": 5,
+      "source": "lp/lp_001.webp",
+      "prompt": "Use case: identity-preserve. Asset: ONE individual full-body transparent PNG photographic fighting game animation frame. Reference 1 defines exact person, clothes, face, shoes and LOW CROUCH neutral posture. Reference 2 defines standing attack to adapt. User requested a CROUCHING VERSION of that move, not a recreation of an unseen photograph. Move: short straight lead-hand jab at crouching chest height; rear hand guards torso; stay in squat. Phase 5/6: RECOVERY: immediately after impact, striking limb halfway retracted, elbow or knee bends, return toward original squat. Keep identity, hair, black shirt and existing emblems/lettering, dark trousers, navy sneakers with white soles, original proportions. Both phases before and after this remain in low crouch, never stand up. Face and move RIGHT. Same camera and lighting. Grounded supporting foot does not move; head remains substantially lower than standing head. Full body all fingers and shoes within transparent margins. Realistic sharp contours, no floor, no shadow, no labels, no other people, true transparent alpha."
+    },
+    {
+      "action": "crouch_mp",
+      "phase": 2,
+      "source": "mp/mp_001.webp",
+      "prompt": "Use case: identity-preserve. Asset: ONE individual full-body transparent PNG photographic fighting game animation frame. Reference 1 defines exact person, clothes, face, shoes and LOW CROUCH neutral posture. Reference 2 defines standing attack to adapt. User requested a CROUCHING VERSION of that move, not a recreation of an unseen photograph. Move: rear-hand straight cross punch with original torso rotation, lowered to crouch chest height; stay in squat. Phase 2/6: START: just begin weight transfer and striking limb motion, 15 percent of the path from squat to impact. Keep identity, hair, black shirt and existing emblems/lettering, dark trousers, navy sneakers with white soles, original proportions. Both phases before and after this remain in low crouch, never stand up. Face and move RIGHT. Same camera and lighting. Grounded supporting foot does not move; head remains substantially lower than standing head. Full body all fingers and shoes within transparent margins. Realistic sharp contours, no floor, no shadow, no labels, no other people, true transparent alpha."
+    },
+    {
+      "action": "crouch_mp",
+      "phase": 3,
+      "source": "mp/mp_001.webp",
+      "prompt": "Use case: identity-preserve. Asset: ONE individual full-body transparent PNG photographic fighting game animation frame. Reference 1 defines exact person, clothes, face, shoes and LOW CROUCH neutral posture. Reference 2 defines standing attack to adapt. User requested a CROUCHING VERSION of that move, not a recreation of an unseen photograph. Move: rear-hand straight cross punch with original torso rotation, lowered to crouch chest height; stay in squat. Phase 3/6: PREPARATION: striking elbow or knee clearly flexed, compact loaded pose immediately before extension, 55 percent toward impact. Keep identity, hair, black shirt and existing emblems/lettering, dark trousers, navy sneakers with white soles, original proportions. Both phases before and after this remain in low crouch, never stand up. Face and move RIGHT. Same camera and lighting. Grounded supporting foot does not move; head remains substantially lower than standing head. Full body all fingers and shoes within transparent margins. Realistic sharp contours, no floor, no shadow, no labels, no other people, true transparent alpha."
+    },
+    {
+      "action": "crouch_mp",
+      "phase": 4,
+      "source": "mp/mp_001.webp",
+      "prompt": "Use case: identity-preserve. Asset: ONE individual full-body transparent PNG photographic fighting game animation frame. Reference 1 defines exact person, clothes, face, shoes and LOW CROUCH neutral posture. Reference 2 defines standing attack to adapt. User requested a CROUCHING VERSION of that move, not a recreation of an unseen photograph. Move: rear-hand straight cross punch with original torso rotation, lowered to crouch chest height; stay in squat. Phase 4/6: IMPACT: unmistakably clear fully extended striking limb, readable original strike silhouette in lowered crouching stance, realistic joint limits. Keep identity, hair, black shirt and existing emblems/lettering, dark trousers, navy sneakers with white soles, original proportions. Both phases before and after this remain in low crouch, never stand up. Face and move RIGHT. Same camera and lighting. Grounded supporting foot does not move; head remains substantially lower than standing head. Full body all fingers and shoes within transparent margins. Realistic sharp contours, no floor, no shadow, no labels, no other people, true transparent alpha."
+    },
+    {
+      "action": "crouch_mp",
+      "phase": 5,
+      "source": "mp/mp_001.webp",
+      "prompt": "Use case: identity-preserve. Asset: ONE individual full-body transparent PNG photographic fighting game animation frame. Reference 1 defines exact person, clothes, face, shoes and LOW CROUCH neutral posture. Reference 2 defines standing attack to adapt. User requested a CROUCHING VERSION of that move, not a recreation of an unseen photograph. Move: rear-hand straight cross punch with original torso rotation, lowered to crouch chest height; stay in squat. Phase 5/6: RECOVERY: immediately after impact, striking limb halfway retracted, elbow or knee bends, return toward original squat. Keep identity, hair, black shirt and existing emblems/lettering, dark trousers, navy sneakers with white soles, original proportions. Both phases before and after this remain in low crouch, never stand up. Face and move RIGHT. Same camera and lighting. Grounded supporting foot does not move; head remains substantially lower than standing head. Full body all fingers and shoes within transparent margins. Realistic sharp contours, no floor, no shadow, no labels, no other people, true transparent alpha."
+    },
+    {
+      "action": "crouch_hp",
+      "phase": 2,
+      "source": "hp/hp_007.webp",
+      "prompt": "Use case: identity-preserve. Asset: ONE individual full-body transparent PNG photographic fighting game animation frame. Reference 1 defines exact person, clothes, face, shoes and LOW CROUCH neutral posture. Reference 2 defines standing attack to adapt. User requested a CROUCHING VERSION of that move, not a recreation of an unseen photograph. Move: original pronounced overhand arm swing, shoulder rotates and elbow arcs overhead, but both knees remain deeply bent throughout; no added uppercut. Phase 2/6: START: just begin weight transfer and striking limb motion, 15 percent of the path from squat to impact. Keep identity, hair, black shirt and existing emblems/lettering, dark trousers, navy sneakers with white soles, original proportions. Both phases before and after this remain in low crouch, never stand up. Face and move RIGHT. Same camera and lighting. Grounded supporting foot does not move; head remains substantially lower than standing head. Full body all fingers and shoes within transparent margins. Realistic sharp contours, no floor, no shadow, no labels, no other people, true transparent alpha."
+    },
+    {
+      "action": "crouch_hp",
+      "phase": 3,
+      "source": "hp/hp_007.webp",
+      "prompt": "Use case: identity-preserve. Asset: ONE individual full-body transparent PNG photographic fighting game animation frame. Reference 1 defines exact person, clothes, face, shoes and LOW CROUCH neutral posture. Reference 2 defines standing attack to adapt. User requested a CROUCHING VERSION of that move, not a recreation of an unseen photograph. Move: original pronounced overhand arm swing, shoulder rotates and elbow arcs overhead, but both knees remain deeply bent throughout; no added uppercut. Phase 3/6: PREPARATION: striking elbow or knee clearly flexed, compact loaded pose immediately before extension, 55 percent toward impact. Keep identity, hair, black shirt and existing emblems/lettering, dark trousers, navy sneakers with white soles, original proportions. Both phases before and after this remain in low crouch, never stand up. Face and move RIGHT. Same camera and lighting. Grounded supporting foot does not move; head remains substantially lower than standing head. Full body all fingers and shoes within transparent margins. Realistic sharp contours, no floor, no shadow, no labels, no other people, true transparent alpha."
+    },
+    {
+      "action": "crouch_hp",
+      "phase": 4,
+      "source": "hp/hp_007.webp",
+      "prompt": "Use case: identity-preserve. Asset: ONE individual full-body transparent PNG photographic fighting game animation frame. Reference 1 defines exact person, clothes, face, shoes and LOW CROUCH neutral posture. Reference 2 defines standing attack to adapt. User requested a CROUCHING VERSION of that move, not a recreation of an unseen photograph. Move: original pronounced overhand arm swing, shoulder rotates and elbow arcs overhead, but both knees remain deeply bent throughout; no added uppercut. Phase 4/6: IMPACT: unmistakably clear fully extended striking limb, readable original strike silhouette in lowered crouching stance, realistic joint limits. Keep identity, hair, black shirt and existing emblems/lettering, dark trousers, navy sneakers with white soles, original proportions. Both phases before and after this remain in low crouch, never stand up. Face and move RIGHT. Same camera and lighting. Grounded supporting foot does not move; head remains substantially lower than standing head. Full body all fingers and shoes within transparent margins. Realistic sharp contours, no floor, no shadow, no labels, no other people, true transparent alpha."
+    },
+    {
+      "action": "crouch_hp",
+      "phase": 5,
+      "source": "hp/hp_007.webp",
+      "prompt": "Use case: identity-preserve. Asset: ONE individual full-body transparent PNG photographic fighting game animation frame. Reference 1 defines exact person, clothes, face, shoes and LOW CROUCH neutral posture. Reference 2 defines standing attack to adapt. User requested a CROUCHING VERSION of that move, not a recreation of an unseen photograph. Move: original pronounced overhand arm swing, shoulder rotates and elbow arcs overhead, but both knees remain deeply bent throughout; no added uppercut. Phase 5/6: RECOVERY: immediately after impact, striking limb halfway retracted, elbow or knee bends, return toward original squat. Keep identity, hair, black shirt and existing emblems/lettering, dark trousers, navy sneakers with white soles, original proportions. Both phases before and after this remain in low crouch, never stand up. Face and move RIGHT. Same camera and lighting. Grounded supporting foot does not move; head remains substantially lower than standing head. Full body all fingers and shoes within transparent margins. Realistic sharp contours, no floor, no shadow, no labels, no other people, true transparent alpha."
+    },
+    {
+      "action": "crouch_lk",
+      "phase": 2,
+      "source": "lk/lk_001.webp",
+      "prompt": "Use case: identity-preserve. Asset: ONE individual full-body transparent PNG photographic fighting game animation frame. Reference 1 defines exact person, clothes, face, shoes and LOW CROUCH neutral posture. Reference 2 defines standing attack to adapt. User requested a CROUCHING VERSION of that move, not a recreation of an unseen photograph. Move: original short low kicking leg extends forward at ankle height from low stance, support knee deeply bent; preserve original low kick identity. Phase 2/6: START: just begin weight transfer and striking limb motion, 15 percent of the path from squat to impact. Keep identity, hair, black shirt and existing emblems/lettering, dark trousers, navy sneakers with white soles, original proportions. Both phases before and after this remain in low crouch, never stand up. Face and move RIGHT. Same camera and lighting. Grounded supporting foot does not move; head remains substantially lower than standing head. Full body all fingers and shoes within transparent margins. Realistic sharp contours, no floor, no shadow, no labels, no other people, true transparent alpha."
+    },
+    {
+      "action": "crouch_lk",
+      "phase": 3,
+      "source": "lk/lk_001.webp",
+      "prompt": "Use case: identity-preserve. Asset: ONE individual full-body transparent PNG photographic fighting game animation frame. Reference 1 defines exact person, clothes, face, shoes and LOW CROUCH neutral posture. Reference 2 defines standing attack to adapt. User requested a CROUCHING VERSION of that move, not a recreation of an unseen photograph. Move: original short low kicking leg extends forward at ankle height from low stance, support knee deeply bent; preserve original low kick identity. Phase 3/6: PREPARATION: striking elbow or knee clearly flexed, compact loaded pose immediately before extension, 55 percent toward impact. Keep identity, hair, black shirt and existing emblems/lettering, dark trousers, navy sneakers with white soles, original proportions. Both phases before and after this remain in low crouch, never stand up. Face and move RIGHT. Same camera and lighting. Grounded supporting foot does not move; head remains substantially lower than standing head. Full body all fingers and shoes within transparent margins. Realistic sharp contours, no floor, no shadow, no labels, no other people, true transparent alpha."
+    },
+    {
+      "action": "crouch_lk",
+      "phase": 4,
+      "source": "lk/lk_001.webp",
+      "prompt": "Use case: identity-preserve. Asset: ONE individual full-body transparent PNG photographic fighting game animation frame. Reference 1 defines exact person, clothes, face, shoes and LOW CROUCH neutral posture. Reference 2 defines standing attack to adapt. User requested a CROUCHING VERSION of that move, not a recreation of an unseen photograph. Move: original short low kicking leg extends forward at ankle height from low stance, support knee deeply bent; preserve original low kick identity. Phase 4/6: IMPACT: unmistakably clear fully extended striking limb, readable original strike silhouette in lowered crouching stance, realistic joint limits. Keep identity, hair, black shirt and existing emblems/lettering, dark trousers, navy sneakers with white soles, original proportions. Both phases before and after this remain in low crouch, never stand up. Face and move RIGHT. Same camera and lighting. Grounded supporting foot does not move; head remains substantially lower than standing head. Full body all fingers and shoes within transparent margins. Realistic sharp contours, no floor, no shadow, no labels, no other people, true transparent alpha."
+    },
+    {
+      "action": "crouch_lk",
+      "phase": 5,
+      "source": "lk/lk_001.webp",
+      "prompt": "Use case: identity-preserve. Asset: ONE individual full-body transparent PNG photographic fighting game animation frame. Reference 1 defines exact person, clothes, face, shoes and LOW CROUCH neutral posture. Reference 2 defines standing attack to adapt. User requested a CROUCHING VERSION of that move, not a recreation of an unseen photograph. Move: original short low kicking leg extends forward at ankle height from low stance, support knee deeply bent; preserve original low kick identity. Phase 5/6: RECOVERY: immediately after impact, striking limb halfway retracted, elbow or knee bends, return toward original squat. Keep identity, hair, black shirt and existing emblems/lettering, dark trousers, navy sneakers with white soles, original proportions. Both phases before and after this remain in low crouch, never stand up. Face and move RIGHT. Same camera and lighting. Grounded supporting foot does not move; head remains substantially lower than standing head. Full body all fingers and shoes within transparent margins. Realistic sharp contours, no floor, no shadow, no labels, no other people, true transparent alpha."
+    },
+    {
+      "action": "crouch_mk",
+      "phase": 2,
+      "source": "hk/hk_001.webp",
+      "prompt": "Use case: identity-preserve. Asset: ONE individual full-body transparent PNG photographic fighting game animation frame. Reference 1 defines exact person, clothes, face, shoes and LOW CROUCH neutral posture. Reference 2 defines standing attack to adapt. User requested a CROUCHING VERSION of that move, not a recreation of an unseen photograph. Move: original medium front kick adapted to crouch: planted leg deeply bent, striking knee lifts then extends in front at low shin height; no roundhouse. Phase 2/6: START: just begin weight transfer and striking limb motion, 15 percent of the path from squat to impact. Keep identity, hair, black shirt and existing emblems/lettering, dark trousers, navy sneakers with white soles, original proportions. Both phases before and after this remain in low crouch, never stand up. Face and move RIGHT. Same camera and lighting. Grounded supporting foot does not move; head remains substantially lower than standing head. Full body all fingers and shoes within transparent margins. Realistic sharp contours, no floor, no shadow, no labels, no other people, true transparent alpha."
+    },
+    {
+      "action": "crouch_mk",
+      "phase": 3,
+      "source": "hk/hk_001.webp",
+      "prompt": "Use case: identity-preserve. Asset: ONE individual full-body transparent PNG photographic fighting game animation frame. Reference 1 defines exact person, clothes, face, shoes and LOW CROUCH neutral posture. Reference 2 defines standing attack to adapt. User requested a CROUCHING VERSION of that move, not a recreation of an unseen photograph. Move: original medium front kick adapted to crouch: planted leg deeply bent, striking knee lifts then extends in front at low shin height; no roundhouse. Phase 3/6: PREPARATION: striking elbow or knee clearly flexed, compact loaded pose immediately before extension, 55 percent toward impact. Keep identity, hair, black shirt and existing emblems/lettering, dark trousers, navy sneakers with white soles, original proportions. Both phases before and after this remain in low crouch, never stand up. Face and move RIGHT. Same camera and lighting. Grounded supporting foot does not move; head remains substantially lower than standing head. Full body all fingers and shoes within transparent margins. Realistic sharp contours, no floor, no shadow, no labels, no other people, true transparent alpha."
+    },
+    {
+      "action": "crouch_mk",
+      "phase": 4,
+      "source": "hk/hk_001.webp",
+      "prompt": "Use case: identity-preserve. Asset: ONE individual full-body transparent PNG photographic fighting game animation frame. Reference 1 defines exact person, clothes, face, shoes and LOW CROUCH neutral posture. Reference 2 defines standing attack to adapt. User requested a CROUCHING VERSION of that move, not a recreation of an unseen photograph. Move: original medium front kick adapted to crouch: planted leg deeply bent, striking knee lifts then extends in front at low shin height; no roundhouse. Phase 4/6: IMPACT: unmistakably clear fully extended striking limb, readable original strike silhouette in lowered crouching stance, realistic joint limits. Keep identity, hair, black shirt and existing emblems/lettering, dark trousers, navy sneakers with white soles, original proportions. Both phases before and after this remain in low crouch, never stand up. Face and move RIGHT. Same camera and lighting. Grounded supporting foot does not move; head remains substantially lower than standing head. Full body all fingers and shoes within transparent margins. Realistic sharp contours, no floor, no shadow, no labels, no other people, true transparent alpha."
+    },
+    {
+      "action": "crouch_mk",
+      "phase": 5,
+      "source": "hk/hk_001.webp",
+      "prompt": "Use case: identity-preserve. Asset: ONE individual full-body transparent PNG photographic fighting game animation frame. Reference 1 defines exact person, clothes, face, shoes and LOW CROUCH neutral posture. Reference 2 defines standing attack to adapt. User requested a CROUCHING VERSION of that move, not a recreation of an unseen photograph. Move: original medium front kick adapted to crouch: planted leg deeply bent, striking knee lifts then extends in front at low shin height; no roundhouse. Phase 5/6: RECOVERY: immediately after impact, striking limb halfway retracted, elbow or knee bends, return toward original squat. Keep identity, hair, black shirt and existing emblems/lettering, dark trousers, navy sneakers with white soles, original proportions. Both phases before and after this remain in low crouch, never stand up. Face and move RIGHT. Same camera and lighting. Grounded supporting foot does not move; head remains substantially lower than standing head. Full body all fingers and shoes within transparent margins. Realistic sharp contours, no floor, no shadow, no labels, no other people, true transparent alpha."
+    },
+    {
+      "action": "crouch_hk",
+      "phase": 2,
+      "source": "mk/mk_006.webp",
+      "prompt": "Use case: identity-preserve. Asset: ONE individual full-body transparent PNG photographic fighting game animation frame. Reference 1 defines exact person, clothes, face, shoes and LOW CROUCH neutral posture. Reference 2 defines standing attack to adapt. User requested a CROUCHING VERSION of that move, not a recreation of an unseen photograph. Move: original powerful extended front kick with backward torso lean, adapted to low stance: support knee stays deeply bent and strike extends at knee height; no jump or added spin. Phase 2/6: START: just begin weight transfer and striking limb motion, 15 percent of the path from squat to impact. Keep identity, hair, black shirt and existing emblems/lettering, dark trousers, navy sneakers with white soles, original proportions. Both phases before and after this remain in low crouch, never stand up. Face and move RIGHT. Same camera and lighting. Grounded supporting foot does not move; head remains substantially lower than standing head. Full body all fingers and shoes within transparent margins. Realistic sharp contours, no floor, no shadow, no labels, no other people, true transparent alpha."
+    },
+    {
+      "action": "crouch_hk",
+      "phase": 3,
+      "source": "mk/mk_006.webp",
+      "prompt": "Use case: identity-preserve. Asset: ONE individual full-body transparent PNG photographic fighting game animation frame. Reference 1 defines exact person, clothes, face, shoes and LOW CROUCH neutral posture. Reference 2 defines standing attack to adapt. User requested a CROUCHING VERSION of that move, not a recreation of an unseen photograph. Move: original powerful extended front kick with backward torso lean, adapted to low stance: support knee stays deeply bent and strike extends at knee height; no jump or added spin. Phase 3/6: PREPARATION: striking elbow or knee clearly flexed, compact loaded pose immediately before extension, 55 percent toward impact. Keep identity, hair, black shirt and existing emblems/lettering, dark trousers, navy sneakers with white soles, original proportions. Both phases before and after this remain in low crouch, never stand up. Face and move RIGHT. Same camera and lighting. Grounded supporting foot does not move; head remains substantially lower than standing head. Full body all fingers and shoes within transparent margins. Realistic sharp contours, no floor, no shadow, no labels, no other people, true transparent alpha."
+    },
+    {
+      "action": "crouch_hk",
+      "phase": 4,
+      "source": "mk/mk_006.webp",
+      "prompt": "Use case: identity-preserve. Asset: ONE individual full-body transparent PNG photographic fighting game animation frame. Reference 1 defines exact person, clothes, face, shoes and LOW CROUCH neutral posture. Reference 2 defines standing attack to adapt. User requested a CROUCHING VERSION of that move, not a recreation of an unseen photograph. Move: original powerful extended front kick with backward torso lean, adapted to low stance: support knee stays deeply bent and strike extends at knee height; no jump or added spin. Phase 4/6: IMPACT: unmistakably clear fully extended striking limb, readable original strike silhouette in lowered crouching stance, realistic joint limits. Keep identity, hair, black shirt and existing emblems/lettering, dark trousers, navy sneakers with white soles, original proportions. Both phases before and after this remain in low crouch, never stand up. Face and move RIGHT. Same camera and lighting. Grounded supporting foot does not move; head remains substantially lower than standing head. Full body all fingers and shoes within transparent margins. Realistic sharp contours, no floor, no shadow, no labels, no other people, true transparent alpha."
+    },
+    {
+      "action": "crouch_hk",
+      "phase": 5,
+      "source": "mk/mk_006.webp",
+      "prompt": "Use case: identity-preserve. Asset: ONE individual full-body transparent PNG photographic fighting game animation frame. Reference 1 defines exact person, clothes, face, shoes and LOW CROUCH neutral posture. Reference 2 defines standing attack to adapt. User requested a CROUCHING VERSION of that move, not a recreation of an unseen photograph. Move: original powerful extended front kick with backward torso lean, adapted to low stance: support knee stays deeply bent and strike extends at knee height; no jump or added spin. Phase 5/6: RECOVERY: immediately after impact, striking limb halfway retracted, elbow or knee bends, return toward original squat. Keep identity, hair, black shirt and existing emblems/lettering, dark trousers, navy sneakers with white soles, original proportions. Both phases before and after this remain in low crouch, never stand up. Face and move RIGHT. Same camera and lighting. Grounded supporting foot does not move; head remains substantially lower than standing head. Full body all fingers and shoes within transparent margins. Realistic sharp contours, no floor, no shadow, no labels, no other people, true transparent alpha."
+    }
+  ]
+}

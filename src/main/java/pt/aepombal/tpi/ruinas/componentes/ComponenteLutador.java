@@ -9,6 +9,8 @@ import pt.aepombal.tpi.ruinas.modelo.DefinicaoAnimacao;
 import pt.aepombal.tpi.ruinas.modelo.FrameCombate;
 import pt.aepombal.tpi.ruinas.modelo.LadoLutador;
 import pt.aepombal.tpi.ruinas.modelo.ResultadoImpacto;
+import pt.aepombal.tpi.ruinas.modelo.RegraDefesa;
+import pt.aepombal.tpi.ruinas.modelo.SaltoLutador;
 import pt.aepombal.tpi.ruinas.modelo.TipoCaixa;
 
 import java.util.List;
@@ -23,24 +25,26 @@ import static com.almasb.fxgl.dsl.FXGL.getAppWidth;
  */
 public final class ComponenteLutador extends Component {
 
-    public static final double LARGURA = 64;
-    public static final double ALTURA = 108;
-    private static final double CHAO_Y = 394;
+    public static final double ESCALA = 1.5;
+    public static final int VIDA_MAXIMA = 10_000;
+    public static final double LARGURA = 64 * ESCALA;
+    public static final double ALTURA = 108 * ESCALA;
+    private static final double CHAO_Y = 502 - ALTURA;
+    private static final int ESCALA_TEMPO_ATAQUE = 1;
     private static final double VELOCIDADE = 235;
     private static final double VELOCIDADE_SALTO_HORIZONTAL = 205;
-    private static final double GRAVIDADE = 1800;
-    private static final double IMPULSO_SALTO = -720;
     private static final double GUARDA_MAXIMA = 100;
     private static final double RECUPERACAO_GUARDA_POR_SEGUNDO = 18;
     private static final double ATRASO_RECUPERACAO_GUARDA = 1.25;
     private static final int STUN_QUEBRA_GUARDA = 54;
+    private static final int STUN_BLOQUEIO_MINIMO = 14;
     private static final double JANELA_BUFFER_ATAQUE = 7.0 / 60.0;
 
     private final LadoLutador lado;
     private final GestorCombate gestor;
     private final Map<AcaoCombate, DefinicaoAnimacao> animacoes;
     private final VistaLutador vista;
-    private int vida = 100;
+    private int vida = VIDA_MAXIMA;
     private double guarda = GUARDA_MAXIMA;
     private int guardaPublicada = (int) GUARDA_MAXIMA;
     private AcaoCombate acao = AcaoCombate.IDLE;
@@ -52,15 +56,12 @@ public final class ComponenteLutador extends Component {
     private double tempoRecuo;
     private double velocidadeRecuo;
     private double tempoBufferAtaque;
-    private double velocidadeY;
+    private final SaltoLutador salto = new SaltoLutador();
     private int movimento;
     private int movimentoRelativo;
-    private int movimentoSalto;
     private int orientacaoAtual;
     private boolean movimentoRelativoAoOponente;
-    private boolean defesaManualPedida;
-    private boolean defesaBaixaPedida;
-    private boolean noChao = true;
+    private boolean baixoPremido;
     private boolean acertoRegistado;
     private AcaoCombate ataquePendente;
 
@@ -88,60 +89,47 @@ public final class ComponenteLutador extends Component {
         movimentoRelativoAoOponente = false;
         movimento = Integer.signum(direcaoMundo);
         movimentoRelativo = movimento * orientacaoAtual;
-        if (podeControlar() && noChao && !defesaManualPedida) {
-            AcaoCombate novaAcao = acaoParaMovimento();
-            if (novaAcao != acao) {
-                mudarAcao(acaoParaMovimento());
-            }
-        }
+        resolverComandosMantidos();
     }
 
     /** Pára o movimento horizontal quando não está em ataque ou stun. */
     public void parar() {
         movimento = 0;
         movimentoRelativo = 0;
-        if (podeControlar() && noChao && !defesaManualPedida
-                && (acao == AcaoCombate.WALK_FORWARD || acao == AcaoCombate.WALK_BACKWARD)) {
-            mudarAcao(AcaoCombate.IDLE);
-        }
+        resolverComandosMantidos();
     }
 
     /** Inicia um salto neutro ou diagonal se o lutador estiver no chão e livre para agir. */
     public void saltar(int direcaoHorizontal) {
-        if (podeControlar() && noChao) {
-            velocidadeY = IMPULSO_SALTO;
-            noChao = false;
-            movimentoSalto = Integer.signum(direcaoHorizontal);
-            mudarAcao(AcaoCombate.JUMP);
+        if (podeControlar() && salto.noChao()) {
+            salto.iniciar(direcaoHorizontal);
+            mudarAcao(salto.acao());
         }
     }
 
-    /** Entra em bloqueio alto ou baixo. */
-    public void bloquear(boolean baixo) {
-        defesaManualPedida = true;
-        defesaBaixaPedida = baixo;
-        if (podeControlar() && noChao) {
-            AcaoCombate defesa = baixo ? AcaoCombate.LOW_BLOCK : AcaoCombate.BLOCK;
-            if (acao != defesa) {
-                mudarAcao(defesa);
-            }
-        }
+    /** Baixo só defende quando combinado com a direção oposta ao adversário. */
+    public void definirBaixo(boolean premido) {
+        baixoPremido = premido;
+        resolverComandosMantidos();
     }
 
-    /** Termina a defesa manual quando Q/S deixam de estar premidos. */
-    public void terminarBloqueio() {
-        defesaManualPedida = false;
-        defesaBaixaPedida = false;
-        if (tempoStun == 0 && podeControlar() && noChao
-                && (acao == AcaoCombate.BLOCK || acao == AcaoCombate.LOW_BLOCK)) {
-            mudarAcao(acaoParaMovimento());
-        }
+    public void provocar() {
+        if (podeControlar() && salto.noChao()) mudarAcao(AcaoCombate.TAUNT);
+    }
+
+    public void celebrarVitoria() {
+        tempoHitstop = 0;
+        tempoStun = 0;
+        mudarAcao(AcaoCombate.VICTORY);
     }
 
     /** Guarda o ataque durante sete frames e executa-o assim que ficar permitido. */
     public void atacar(AcaoCombate novoAtaque) {
         if (novoAtaque.eAtaque() && vida > 0) {
-            ataquePendente = novoAtaque;
+            if (!salto.noChao() && salto.ataqueUsado()) return;
+            ataquePendente = salto.noChao()
+                    ? novoAtaque.selecionarAtaque(baixoPremido, movimentoRelativo < 0)
+                    : novoAtaque.aereo();
             tempoBufferAtaque = JANELA_BUFFER_ATAQUE;
             tentarExecutarAtaquePendente();
         }
@@ -189,19 +177,17 @@ public final class ComponenteLutador extends Component {
 
     /** Testa se o bloqueio atual defende corretamente o golpe recebido. */
     public boolean bloqueia(AcaoCombate ataque) {
-        if (guarda <= 0) {
-            return false;
-        }
-        return (acao == AcaoCombate.LOW_BLOCK && ataque.exigeBloqueioBaixo())
-                || ((acao == AcaoCombate.BLOCK || acao == AcaoCombate.WALK_BACKWARD)
-                    && !ataque.exigeBloqueioBaixo());
+        return RegraDefesa.bloqueia(acao, ataque, movimentoRelativo < 0,
+                baixoPremido, salto.noChao(), guarda > 0);
     }
 
     /** Aplica um impacto, usando stun de bloqueio quando a defesa foi correta. */
     public ResultadoImpacto receberImpacto(CaixaFrame hitbox, boolean bloqueado,
                                             double escalaDano) {
         if (bloqueado) {
-            guarda = Math.max(0, guarda - Math.max(8, hitbox.dano() * 0.6));
+            // Guarda continua em 0–100, independentemente da escala da vida/dano.
+            double danoNaEscalaDaGuarda = hitbox.dano() * 100.0 / VIDA_MAXIMA;
+            guarda = Math.max(0, guarda - Math.max(8, danoNaEscalaDaGuarda * 0.6));
             atrasoRecuperacaoGuarda = ATRASO_RECUPERACAO_GUARDA;
             publicarGuarda();
 
@@ -212,8 +198,10 @@ public final class ComponenteLutador extends Component {
                 return new ResultadoImpacto(false, true, STUN_QUEBRA_GUARDA, 0);
             }
 
-            tempoStun = hitbox.blockStun() / 60.0;
-            return new ResultadoImpacto(true, false, hitbox.blockStun(), 0);
+            int blockStun = Math.max(STUN_BLOQUEIO_MINIMO, hitbox.blockStun());
+            tempoStun = blockStun / 60.0;
+            mudarAcao(acao == AcaoCombate.LOW_BLOCK ? AcaoCombate.LOW_BLOCK : AcaoCombate.BLOCK);
+            return new ResultadoImpacto(true, false, blockStun, 0);
         }
 
         tempoStun = hitbox.hitStun() / 60.0;
@@ -232,9 +220,9 @@ public final class ComponenteLutador extends Component {
         if (!acao.eAtaque()) {
             return 0;
         }
-        double restantes = Math.max(0, frameAtual().duracaoFrames() - tempoNoFrame * 60.0);
+        double restantes = Math.max(0, duracaoAtualFrames() - tempoNoFrame * 60.0);
         for (int i = indiceFrame + 1; i < animacaoAtual().frames().size(); i++) {
-            restantes += animacaoAtual().frames().get(i).duracaoFrames();
+            restantes += animacaoAtual().frames().get(i).duracaoFrames() * ESCALA_TEMPO_ATAQUE;
         }
         return (int) Math.ceil(restantes);
     }
@@ -264,6 +252,7 @@ public final class ComponenteLutador extends Component {
     @Override
     public void onUpdate(double tpf) {
         if (!gestor.rondaAtiva()) {
+            if (acao == AcaoCombate.VICTORY) atualizarFrame(tpf);
             return;
         }
         atualizarOrientacao();
@@ -290,7 +279,7 @@ public final class ComponenteLutador extends Component {
         movimentoRelativoAoOponente = true;
         movimentoRelativo = Integer.signum(direcaoRelativa);
         movimento = movimentoRelativo * orientacaoAtual;
-        if (podeControlar() && noChao && !defesaManualPedida) {
+        if (podeControlar() && salto.noChao()) {
             if (acao != acaoMovimento) {
                 mudarAcao(acaoMovimento);
             }
@@ -301,12 +290,11 @@ public final class ComponenteLutador extends Component {
         if (tempoStun > 0) {
             tempoStun = Math.max(0, tempoStun - tpf);
             if (tempoStun == 0 && vida > 0 && acao == AcaoCombate.HIT) {
-                mudarAcao(defesaManualPedida
-                        ? (defesaBaixaPedida ? AcaoCombate.LOW_BLOCK : AcaoCombate.BLOCK)
-                        : acaoParaMovimento());
+                mudarAcao(acaoParaMovimento());
             } else if (tempoStun == 0 && movimentoRelativoAoOponente) {
                 movimento = movimentoRelativo * orientacaoAtual;
             }
+            if (tempoStun == 0 && acao == AcaoCombate.LOW_BLOCK) atualizarVista();
         }
     }
 
@@ -324,12 +312,21 @@ public final class ComponenteLutador extends Component {
     }
 
     private void tentarExecutarAtaquePendente() {
-        if (ataquePendente == null || !noChao || tempoHitstop > 0) {
+        if (ataquePendente == null || tempoHitstop > 0) {
             return;
+        }
+        if (salto.noChao() && ataquePendente.eAtaqueAereo()) {
+            ataquePendente = null;
+            return;
+        }
+        if (!salto.noChao()) {
+            if (salto.ataqueUsado()) return;
+            ataquePendente = ataquePendente.aereo();
         }
         boolean ataqueNormal = podeControlar();
         boolean cancelamento = podeCancelarPara(ataquePendente);
         if (ataqueNormal || cancelamento) {
+            if (!salto.noChao() && !salto.consumirAtaque()) return;
             AcaoCombate ataque = ataquePendente;
             ataquePendente = null;
             tempoBufferAtaque = 0;
@@ -338,17 +335,17 @@ public final class ComponenteLutador extends Component {
     }
 
     private boolean podeCancelarPara(AcaoCombate proximoAtaque) {
-        return acao.eAtaque() && acertoRegistado
+        return salto.noChao() && acao.eAtaque() && acertoRegistado
                 && proximoAtaque.nivelForca() > acao.nivelForca();
     }
 
     private void resolverComandosMantidos() {
-        if (!podeControlar() || !noChao) {
+        if (!podeControlar() || !salto.noChao()) {
             return;
         }
         AcaoCombate pretendida;
-        if (defesaManualPedida) {
-            pretendida = defesaBaixaPedida ? AcaoCombate.LOW_BLOCK : AcaoCombate.BLOCK;
+        if (baixoPremido && movimentoRelativo < 0) {
+            pretendida = AcaoCombate.LOW_BLOCK;
         } else {
             pretendida = acaoParaMovimento();
         }
@@ -383,8 +380,8 @@ public final class ComponenteLutador extends Component {
                 movimentoRelativo = movimento * orientacaoAtual;
             }
             vista.olharPara(orientacaoAtual);
-            vista.mostrar(acao, indiceFrame);
-            if (noChao && tempoStun == 0
+            atualizarVista();
+            if (salto.noChao() && tempoStun == 0
                     && (acao == AcaoCombate.WALK_FORWARD || acao == AcaoCombate.WALK_BACKWARD)) {
                 AcaoCombate novaAcao = acaoParaMovimento();
                 if (novaAcao != acao) {
@@ -419,15 +416,12 @@ public final class ComponenteLutador extends Component {
     }
 
     private void atualizarSalto(double tpf) {
-        if (!noChao) {
-            velocidadeY += GRAVIDADE * tpf;
-            entity.translateY(velocidadeY * tpf);
-            if (entity.getY() >= CHAO_Y) {
-                entity.setY(CHAO_Y);
-                velocidadeY = 0;
-                noChao = true;
-                movimentoSalto = 0;
-                if (acao == AcaoCombate.JUMP) {
+        if (!salto.noChao()) {
+            salto.atualizar(tpf);
+            entity.setY(CHAO_Y + salto.altura());
+            if (salto.noChao()) {
+                if (ataquePendente != null && ataquePendente.eAtaqueAereo()) ataquePendente = null;
+                if (acao.eSalto() || acao.eAtaqueAereo()) {
                     mudarAcao(acaoParaMovimento());
                 }
             }
@@ -435,8 +429,8 @@ public final class ComponenteLutador extends Component {
     }
 
     private void atualizarMovimento(double tpf) {
-        if (!noChao && movimentoSalto != 0) {
-            empurrar(movimentoSalto * VELOCIDADE_SALTO_HORIZONTAL * tpf);
+        if (!salto.noChao() && salto.direcao() != 0) {
+            empurrar(salto.direcao() * VELOCIDADE_SALTO_HORIZONTAL * tpf);
         } else if (movimento != 0 && podeControlar()
                 && (acao == AcaoCombate.WALK_FORWARD || acao == AcaoCombate.WALK_BACKWARD)) {
             empurrar(movimento * VELOCIDADE * tpf);
@@ -444,33 +438,44 @@ public final class ComponenteLutador extends Component {
     }
 
     private void atualizarFrame(double tpf) {
+        if (acao.eSalto()) {
+            indiceFrame = salto.indiceFrame(animacaoAtual().frames().size());
+            atualizarVista();
+            return;
+        }
         tempoNoFrame += tpf;
-        double duracao = frameAtual().duracaoFrames() / 60.0;
+        double duracao = duracaoAtualFrames() / 60.0;
         while (tempoNoFrame >= duracao) {
             tempoNoFrame -= duracao;
             avancarFrame();
-            duracao = frameAtual().duracaoFrames() / 60.0;
+            duracao = duracaoAtualFrames() / 60.0;
         }
+    }
+
+    private int duracaoAtualFrames() {
+        return frameAtual().duracaoFrames() * (acao.eAtaque() ? ESCALA_TEMPO_ATAQUE : 1);
     }
 
     private void avancarFrame() {
         if (indiceFrame + 1 < animacaoAtual().frames().size()) {
             indiceFrame++;
-            vista.mostrar(acao, indiceFrame);
+            atualizarVista();
         } else if (acao.repete()) {
             indiceFrame = 0;
-            vista.mostrar(acao, indiceFrame);
-        } else if (acao == AcaoCombate.JUMP) {
+            atualizarVista();
+        } else if (acao.eSalto()) {
             indiceFrame = animacaoAtual().frames().size() - 1;
-        } else if (acao != AcaoCombate.KNOCKOUT && acao != AcaoCombate.HIT) {
-            mudarAcao(AcaoCombate.IDLE);
+        } else if (acao != AcaoCombate.KNOCKOUT && acao != AcaoCombate.HIT
+                && acao != AcaoCombate.VICTORY) {
+            mudarAcao(acaoParaMovimento());
         }
     }
 
     private boolean podeControlar() {
         return gestor.rondaAtiva() && vida > 0 && tempoStun == 0 && tempoHitstop == 0
                 && !acao.eAtaque()
-                && acao != AcaoCombate.HIT && acao != AcaoCombate.KNOCKOUT;
+                && acao != AcaoCombate.HIT && acao != AcaoCombate.KNOCKOUT
+                && acao != AcaoCombate.TAUNT;
     }
 
     private void mudarAcao(AcaoCombate novaAcao) {
@@ -478,15 +483,24 @@ public final class ComponenteLutador extends Component {
             throw new IllegalStateException("Faltam frames para " + novaAcao);
         }
         acao = novaAcao;
-        indiceFrame = 0;
+        indiceFrame = novaAcao.eSalto() ? salto.indiceFrame(animacoes.get(novaAcao).frames().size()) : 0;
         tempoNoFrame = 0;
         acertoRegistado = false;
         String rotulo = gestor.rotuloAcao(novaAcao);
-        vista.mostrar(novaAcao, indiceFrame);
+        atualizarVista();
         gestor.atualizarAcao(this, rotulo);
     }
 
+    private void atualizarVista() {
+        vista.mostrar(acao, indiceFrame);
+        vista.inclinarSalto(acao == AcaoCombate.JUMP_SIDE ? -8 * salto.direcao() : 0);
+    }
+
     private AcaoCombate acaoParaMovimento() {
+        if (!salto.noChao()) return salto.acao();
+        if (baixoPremido) {
+            return movimentoRelativo < 0 ? AcaoCombate.LOW_BLOCK : AcaoCombate.CROUCH;
+        }
         if (movimentoRelativo == 0) {
             return AcaoCombate.IDLE;
         }
@@ -503,9 +517,10 @@ public final class ComponenteLutador extends Component {
     }
 
     private CaixaFrame transformar(CaixaFrame caixaFrame) {
-        Caixa local = orientacaoAtual == 1
-                ? caixaFrame.caixa()
-                : caixaFrame.caixa().espelhada(LARGURA);
+        Caixa original = caixaFrame.caixa();
+        Caixa ampliada = new Caixa(original.x() * ESCALA, original.y() * ESCALA,
+                original.largura() * ESCALA, original.altura() * ESCALA);
+        Caixa local = orientacaoAtual == 1 ? ampliada : ampliada.espelhada(LARGURA);
         return new CaixaFrame(caixaFrame.tipo(), caixaFrame.identificador(),
                 local.noMundo(entity.getX(), entity.getY()), caixaFrame.dano(),
                 caixaFrame.hitStun(), caixaFrame.blockStun());

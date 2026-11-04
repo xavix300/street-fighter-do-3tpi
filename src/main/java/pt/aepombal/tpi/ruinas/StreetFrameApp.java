@@ -21,6 +21,7 @@ import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
+import pt.aepombal.tpi.ruinas.componentes.ComponenteLutador;
 import pt.aepombal.tpi.ruinas.logica.GestorCombate;
 import pt.aepombal.tpi.ruinas.modelo.AcaoCombate;
 import pt.aepombal.tpi.ruinas.modelo.DadosCombateException;
@@ -44,6 +45,9 @@ public final class StreetFrameApp extends GameApplication {
     private final ProgressoCombate progresso = new ProgressoCombate();
     private boolean esquerdaPremida;
     private boolean direitaPremida;
+    private boolean baixoPremido;
+    private int botoesComando;
+    private final ComandoWindows comando = new ComandoWindows();
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -56,8 +60,8 @@ public final class StreetFrameApp extends GameApplication {
 
     @Override
     protected void initGameVars(Map<String, Object> vars) {
-        vars.put("vidaJogador", 100);
-        vars.put("vidaOponente", 100);
+        vars.put("vidaJogador", ComponenteLutador.VIDA_MAXIMA);
+        vars.put("vidaOponente", ComponenteLutador.VIDA_MAXIMA);
         vars.put("guardaJogador", 100);
         vars.put("guardaOponente", 100);
         vars.put("pontos", 0);
@@ -72,9 +76,22 @@ public final class StreetFrameApp extends GameApplication {
         ligarMovimento("Esquerda", KeyCode.A, false);
         ligarMovimento("Direita", KeyCode.D, true);
         ligarAcao("Saltar", KeyCode.W, () -> gestor.saltarJogador(direcaoSalto()));
-        ligarAcao("Bloqueio alto", KeyCode.Q, () -> gestor.bloquearJogador(false));
-        ligarAcao("Bloqueio baixo", KeyCode.S, () -> gestor.bloquearJogador(true));
+        ligarAcao("Provocação", KeyCode.T, () -> gestor.provocarJogador());
+        getInput().addAction(new UserAction("Baixo") {
+            @Override protected void onActionBegin() { baixoPremido = true; atualizarBaixo(); }
+            @Override protected void onActionEnd() { baixoPremido = false; atualizarBaixo(); }
+        }, KeyCode.S);
+        // Também recebe as libertações diretamente, incluindo combinações de teclas.
+        getInput().addEventFilter(javafx.scene.input.KeyEvent.KEY_RELEASED, evento -> {
+            switch (evento.getCode()) {
+                case A -> { esquerdaPremida = false; atualizarMovimentoPremido(); }
+                case D -> { direitaPremida = false; atualizarMovimentoPremido(); }
+                case S -> { baixoPremido = false; atualizarBaixo(); }
+                default -> { }
+            }
+        });
         ligarAcao("Depuração de hitboxes", KeyCode.F3, () -> gestor.alternarDepuracao());
+        ligarAcao("Caixas (alternativa)", KeyCode.H, () -> gestor.alternarDepuracao());
         ligarAtaques();
     }
 
@@ -83,6 +100,31 @@ public final class StreetFrameApp extends GameApplication {
         gestor = criarGestor();
         getGameWorld().addEntityFactory(new FabricaEntidades(gestor));
         gestor.criarMundo();
+        esquerdaPremida = direitaPremida = baixoPremido = false;
+        if (botoesComando == 0) comando.iniciar();
+    }
+
+    @Override
+    protected void onUpdate(double tpf) {
+        if (gestor == null) return;
+        int atual = comando.botoes();
+        if (atual == botoesComando) return;
+        int novos = atual & ~botoesComando;
+        botoesComando = atual;
+        atualizarMovimentoPremido();
+        atualizarBaixo();
+        if ((novos & 1) != 0) gestor.saltarJogador(direcaoSalto());
+        if ((novos & 0x4000) != 0) gestor.atacarJogador(AcaoCombate.LP); // X
+        if ((novos & 0x8000) != 0) gestor.atacarJogador(AcaoCombate.MP); // Y
+        if ((novos & 0x0200) != 0) gestor.atacarJogador(AcaoCombate.HP); // RB
+        if ((novos & 0x1000) != 0) gestor.atacarJogador(AcaoCombate.LK); // A
+        if ((novos & 0x2000) != 0) gestor.atacarJogador(AcaoCombate.MK); // B
+        if ((novos & 0x0100) != 0) gestor.atacarJogador(AcaoCombate.HK); // LB
+        if ((novos & 0x0020) != 0) gestor.provocarJogador(); // View/Back
+    }
+
+    private void atualizarBaixo() {
+        if (gestor != null) gestor.baixoJogador(baixoPremido || (botoesComando & 2) != 0);
     }
 
     @Override
@@ -140,9 +182,12 @@ public final class StreetFrameApp extends GameApplication {
     }
 
     private void atualizarMovimentoPremido() {
-        if (direitaPremida == esquerdaPremida) {
+        if (gestor == null) return;
+        boolean esquerda = esquerdaPremida || (botoesComando & 4) != 0;
+        boolean direita = direitaPremida || (botoesComando & 8) != 0;
+        if (direita == esquerda) {
             gestor.pararJogador();
-        } else if (direitaPremida) {
+        } else if (direita) {
             gestor.moverJogadorParaDireita();
         } else {
             gestor.moverJogadorParaEsquerda();
@@ -150,7 +195,8 @@ public final class StreetFrameApp extends GameApplication {
     }
 
     private int direcaoSalto() {
-        return (direitaPremida ? 1 : 0) - (esquerdaPremida ? 1 : 0);
+        return ((direitaPremida || (botoesComando & 8) != 0) ? 1 : 0)
+                - ((esquerdaPremida || (botoesComando & 4) != 0) ? 1 : 0);
     }
 
     private Pane criarHudArcade() {
@@ -226,7 +272,7 @@ public final class StreetFrameApp extends GameApplication {
         Rectangle preenchimento = new Rectangle(x + 5, y + 5, 0, 23);
         preenchimento.setArcWidth(5);
         preenchimento.setArcHeight(5);
-        preenchimento.widthProperty().bind(vida.multiply(larguraInterior / 100.0));
+        preenchimento.widthProperty().bind(vida.multiply(larguraInterior / ComponenteLutador.VIDA_MAXIMA));
         preenchimento.setFill(new LinearGradient(0, 0, 0, 1, true, CycleMethod.NO_CYCLE,
                 new Stop(0, Color.web("#FFF7A0")),
                 new Stop(0.45, Color.web("#FFD83D")),
@@ -252,8 +298,8 @@ public final class StreetFrameApp extends GameApplication {
             marcas.getChildren().add(marca);
         }
 
-        Text numero = texto("", inversa ? x + 307 : x + 13, y + 25, 17, Color.WHITE, true);
-        numero.textProperty().bind(vida.asString("%03d"));
+        Text numero = texto("", inversa ? x + 284 : x + 13, y + 25, 17, Color.WHITE, true);
+        numero.textProperty().bind(vida.asString("%d"));
         numero.setStroke(Color.web("#4A2510"));
         numero.setStrokeWidth(0.7);
 
@@ -316,9 +362,9 @@ public final class StreetFrameApp extends GameApplication {
         topo.setStroke(Color.web("#27D8FF", 0.72));
         topo.setStrokeWidth(2);
 
-        Text linha1 = texto("A  ESQUERDA     D  DIREITA     RECUAR  =  BLOCK     W / A+W / D+W  SALTO",
+        Text linha1 = texto("A/D MOVER    TRÁS BLOCK    S + TRÁS BLOCK BAIXO    W SALTO    T TAUNT",
                 105, 23, 12, Color.web("#F7D95B"), true);
-        Text linha2 = texto("U I O  SOCOS     J K L  PONTAPÉS     F3  MOSTRAR CAIXAS     ESC  PAUSA",
+        Text linha2 = texto("U I O  SOCOS     J K L  PONTAPÉS     F3 / H  CAIXAS     ESC  PAUSA",
                 166, 43, 11, Color.web("#D9E8FF"), false);
         ajuda.getChildren().addAll(fundo, topo, linha1, linha2);
         return ajuda;

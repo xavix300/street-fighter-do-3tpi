@@ -1,0 +1,37 @@
+{
+  "tool": "image_gen built-in",
+  "tasks": [
+    {
+      "photo": 5,
+      "prompt": "Use case: background-extraction / identity-preserve. Edit this exact photograph: extract ONLY the full person into a genuinely transparent PNG. Keep the exact original jump pose, limb angles and fingers, facial identity, hair, black school shirt and emblem, dark trousers, navy sneakers with white soles, camera angle and right-facing direction. This is jump frame 5 in an existing sequence, so do not redesign or change the action. Remove ALL room, posters, door, floor, wall, chair, shadows and detached background fragments, including tiny chunks above the head and between limbs. Improve sharpness of motion-blurred contours while preserving pose and proportions. Whole body must remain fully inside image with transparent margins, no cut hands or feet, no text, no fake checkerboard. Only one clean photographic full-body cutout."
+    },
+    {
+      "photo": 6,
+      "prompt": "Use case: background-extraction / identity-preserve. Edit this exact photograph: extract ONLY the full person into a genuinely transparent PNG. Keep the exact original jump pose, limb angles and fingers, facial identity, hair, black school shirt and emblem, dark trousers, navy sneakers with white soles, camera angle and right-facing direction. This is jump frame 6 in an existing sequence, so do not redesign or change the action. Remove ALL room, posters, door, floor, wall, chair, shadows and detached background fragments, including tiny chunks above the head and between limbs. Improve sharpness of motion-blurred contours while preserving pose and proportions. Whole body must remain fully inside image with transparent margins, no cut hands or feet, no text, no fake checkerboard. Only one clean photographic full-body cutout."
+    },
+    {
+      "photo": 7,
+      "prompt": "Use case: background-extraction / identity-preserve. Edit this exact photograph: extract ONLY the full person into a genuinely transparent PNG. Keep the exact original jump pose, limb angles and fingers, facial identity, hair, black school shirt and emblem, dark trousers, navy sneakers with white soles, camera angle and right-facing direction. This is jump frame 7 in an existing sequence, so do not redesign or change the action. Remove ALL room, posters, door, floor, wall, chair, shadows and detached background fragments, including tiny chunks above the head and between limbs. Improve sharpness of motion-blurred contours while preserving pose and proportions. Whole body must remain fully inside image with transparent margins, no cut hands or feet, no text, no fake checkerboard. Only one clean photographic full-body cutout."
+    },
+    {
+      "photo": 8,
+      "prompt": "Use case: background-extraction / identity-preserve. Edit this exact photograph: extract ONLY the full person into a genuinely transparent PNG. Keep the exact original jump pose, limb angles and fingers, facial identity, hair, black school shirt and emblem, dark trousers, navy sneakers with white soles, camera angle and right-facing direction. This is jump frame 8 in an existing sequence, so do not redesign or change the action. Remove ALL room, posters, door, floor, wall, chair, shadows and detached background fragments, including tiny chunks above the head and between limbs. Improve sharpness of motion-blurred contours while preserving pose and proportions. Whole body must remain fully inside image with transparent margins, no cut hands or feet, no text, no fake checkerboard. Only one clean photographic full-body cutout."
+    },
+    {
+      "photo": 9,
+      "prompt": "Use case: background-extraction / identity-preserve. Edit this exact photograph: extract ONLY the full person into a genuinely transparent PNG. Keep the exact original jump pose, limb angles and fingers, facial identity, hair, black school shirt and emblem, dark trousers, navy sneakers with white soles, camera angle and right-facing direction. This is jump frame 9 in an existing sequence, so do not redesign or change the action. Remove ALL room, posters, door, floor, wall, chair, shadows and detached background fragments, including tiny chunks above the head and between limbs. Improve sharpness of motion-blurred contours while preserving pose and proportions. Whole body must remain fully inside image with transparent margins, no cut hands or feet, no text, no fake checkerboard. Only one clean photographic full-body cutout."
+    },
+    {
+      "photo": 10,
+      "prompt": "Use case: background-extraction / identity-preserve. Edit this exact photograph: extract ONLY the full person into a genuinely transparent PNG. Keep the exact original jump pose, limb angles and fingers, facial identity, hair, black school shirt and emblem, dark trousers, navy sneakers with white soles, camera angle and right-facing direction. This is jump frame 10 in an existing sequence, so do not redesign or change the action. Remove ALL room, posters, door, floor, wall, chair, shadows and detached background fragments, including tiny chunks above the head and between limbs. Improve sharpness of motion-blurred contours while preserving pose and proportions. Whole body must remain fully inside image with transparent margins, no cut hands or feet, no text, no fake checkerboard. Only one clean photographic full-body cutout."
+    },
+    {
+      "photo": 11,
+      "prompt": "Use case: background-extraction / identity-preserve. Edit this exact photograph: extract ONLY the full person into a genuinely transparent PNG. Keep the exact original jump pose, limb angles and fingers, facial identity, hair, black school shirt and emblem, dark trousers, navy sneakers with white soles, camera angle and right-facing direction. This is jump frame 11 in an existing sequence, so do not redesign or change the action. Remove ALL room, posters, door, floor, wall, chair, shadows and detached background fragments, including tiny chunks above the head and between limbs. Improve sharpness of motion-blurred contours while preserving pose and proportions. Whole body must remain fully inside image with transparent margins, no cut hands or feet, no text, no fake checkerboard. Only one clean photographic full-body cutout."
+    },
+    {
+      "photo": 12,
+      "prompt": "Use case: background-extraction / identity-preserve. Edit this exact photograph: extract ONLY the full person into a genuinely transparent PNG. Keep the exact original jump pose, limb angles and fingers, facial identity, hair, black school shirt and emblem, dark trousers, navy sneakers with white soles, camera angle and right-facing direction. This is jump frame 12 in an existing sequence, so do not redesign or change the action. Remove ALL room, posters, door, floor, wall, chair, shadows and detached background fragments, including tiny chunks above the head and between limbs. Improve sharpness of motion-blurred contours while preserving pose and proportions. Whole body must remain fully inside image with transparent margins, no cut hands or feet, no text, no fake checkerboard. Only one clean photographic full-body cutout."
+    }
+  ]
+}

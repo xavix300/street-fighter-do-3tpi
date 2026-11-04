@@ -3,6 +3,8 @@ package pt.aepombal.tpi.ruinas.logica;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.SpawnData;
 import javafx.scene.Group;
+import javafx.animation.PauseTransition;
+import javafx.util.Duration;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import pt.aepombal.tpi.ruinas.FabricaEntidades;
@@ -90,14 +92,17 @@ public final class GestorCombate {
         lutadorJogador().saltar(direcaoHorizontal);
     }
 
-    /** Coloca o jogador em bloqueio alto ou baixo. */
-    public void bloquearJogador(boolean baixo) {
-        lutadorJogador().bloquear(baixo);
+    public void baixoJogador(boolean premido) {
+        lutadorJogador().definirBaixo(premido);
     }
 
     /** Executa um dos seis ataques do jogador. */
     public void atacarJogador(AcaoCombate ataque) {
         lutadorJogador().atacar(ataque);
+    }
+
+    public void provocarJogador() {
+        lutadorJogador().provocar();
     }
 
     /** Ativa ou oculta o modo de depuração das hitboxes, hurtboxes e pushboxes. */
@@ -164,15 +169,31 @@ public final class GestorCombate {
             case IDLE, STANCE -> "EM GUARDA";
             case GUARD, BLOCK -> "BLOQUEIO ALTO";
             case LOW_BLOCK -> "BLOQUEIO BAIXO";
+            case CROUCH -> "AGACHADO";
             case WALK_FORWARD -> "AVANÇA";
             case WALK_BACKWARD -> "RECUA";
             case JUMP -> "SALTO";
+            case JUMP_SIDE -> "SALTO LATERAL";
+            case AIR_LP -> "SOCO LEVE NO AR";
+            case AIR_MP -> "SOCO MÉDIO NO AR";
+            case AIR_HP -> "SOCO FORTE NO AR";
+            case AIR_LK -> "PONTAPÉ LEVE NO AR";
+            case AIR_MK -> "PONTAPÉ MÉDIO NO AR";
+            case AIR_HK -> "PONTAPÉ FORTE NO AR";
             case LP -> "SOCO LEVE";
             case MP -> "SOCO MÉDIO";
             case HP -> "SOCO FORTE";
             case LK -> "PONTAPÉ LEVE";
             case MK -> "PONTAPÉ MÉDIO";
             case HK -> "PONTAPÉ FORTE";
+            case CROUCH_LP -> "SOCO LEVE AGACHADO";
+            case CROUCH_MP -> "SOCO MÉDIO AGACHADO";
+            case CROUCH_HP -> "SOCO FORTE AGACHADO";
+            case CROUCH_LK -> "PONTAPÉ LEVE AGACHADO";
+            case CROUCH_MK -> "PONTAPÉ MÉDIO AGACHADO";
+            case CROUCH_HK -> "PONTAPÉ FORTE AGACHADO";
+            case ANTI_AIR_MP -> "ANTI-AIR EM PÉ";
+            case ANTI_AIR_CROUCH_MP -> "ANTI-AIR AGACHADO";
             case HIT -> "ATINGIDO";
             case KNOCKOUT -> "K.O.";
             case TAUNT -> "PROVOCAÇÃO";
@@ -192,7 +213,13 @@ public final class GestorCombate {
             progresso.registarVitoria();
         }
         String mensagem = "Venceu " + vencedor.name() + ". Pontos: " + comPontos();
-        mostrarFim(mensagem);
+        ComponenteLutador lutadorVencedor = lutadores.get(vencedor);
+        lutadorVencedor.celebrarVitoria();
+        double duracao = animacoes.get(AcaoCombate.VICTORY).frames().stream()
+                .mapToInt(frame -> frame.duracaoFrames()).sum() / 60.0;
+        PauseTransition espera = new PauseTransition(Duration.seconds(duracao + 0.5));
+        espera.setOnFinished(evento -> mostrarFim(mensagem));
+        espera.play();
     }
 
     /** Devolve o componente do adversário de um lutador. */
@@ -205,16 +232,21 @@ public final class GestorCombate {
         return progresso.dificuldade();
     }
 
+    /** Indica se os lutadores ainda podem agir nesta ronda. */
+    public boolean rondaAtiva() {
+        return !rondaTerminada;
+    }
+
     /** Devolve todas as definições de frames carregadas do ficheiro externo. */
     public Map<AcaoCombate, DefinicaoAnimacao> animacoes() {
         return animacoes;
     }
 
     private void criarLutador(LadoLutador lado, double x) {
-        Entity entidade = spawn("lutador", new SpawnData(x, 394)
+        Entity entidade = spawn("lutador", new SpawnData(x, 340)
                 .put("lado", lado)
                 .put("gestor", this));
-        entidade.setY(394);
+        entidade.setY(340);
     }
 
     private void acertarSeSobrepoe(ComponenteLutador atacante, ComponenteLutador alvo) {
@@ -222,12 +254,19 @@ public final class GestorCombate {
             for (CaixaFrame hurtbox : alvo.caixasNoMundo(TipoCaixa.HURT)) {
                 if (hitbox.caixa().interceta(hurtbox.caixa())) {
                     boolean tentativaBloqueio = alvo.bloqueia(atacante.acao());
-                    ResultadoImpacto impacto = alvo.receberImpacto(hitbox, tentativaBloqueio);
+                    ResultadoImpacto impacto = alvo.receberImpacto(hitbox, tentativaBloqueio, 1.0);
                     atacante.registarAcerto();
+                    // Adaptado do tratamento de impacto de Sakuga Engine: confirmar o
+                    // contacto, congelar ambos e aplicar recuo também ao bloquear.
+                    atacante.aplicarHitstop(5);
+                    alvo.aplicarHitstop(5);
+                    double sentido = alvo.getEntity().getX() >= atacante.getEntity().getX() ? 1 : -1;
+                    alvo.aplicarRecuo(sentido * (impacto.bloqueado() ? 90 : 150), 9);
                     mostrarFrameAdvantage(atacante, impacto);
                     if (atacante.lado() == LadoLutador.JOGADOR) {
-                        inc("pontos", impacto.bloqueado() ? 5 : hitbox.dano());
+                        inc("pontos", impacto.bloqueado() ? 5 : impacto.danoAplicado());
                     }
+                    if (alvo.vida() == 0) lutadorDerrotado(alvo);
                     return;
                 }
             }

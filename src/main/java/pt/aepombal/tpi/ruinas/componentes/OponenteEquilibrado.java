@@ -20,9 +20,10 @@ public final class OponenteEquilibrado extends ComportamentoOponente {
             return;
         }
         if (proximoAtaque) {
-            lutador().atacar(AcaoCombate.MK);
+            atacarVariado(AcaoCombate.LP, AcaoCombate.MP, AcaoCombate.HP,
+                    AcaoCombate.LK, AcaoCombate.MK, AcaoCombate.HK);
         } else {
-            lutador().bloquear(false);
+            lutador().moverParaTras();
         }
         proximoAtaque = !proximoAtaque;
     }

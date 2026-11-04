@@ -16,12 +16,13 @@ public final class OponenteAgressivo extends ComportamentoOponente {
         if (gestor.distanciaAteJogador(lutador()) > 95) {
             lutador().moverParaFrente();
         } else {
-            lutador().atacar(AcaoCombate.HP);
+            atacarVariado(AcaoCombate.LP, AcaoCombate.MP, AcaoCombate.HP,
+                    AcaoCombate.LK, AcaoCombate.MK, AcaoCombate.HK);
         }
     }
 
     @Override
     protected double intervaloDecisao() {
-        return 0.35;
+        return 0.55;
     }
 }

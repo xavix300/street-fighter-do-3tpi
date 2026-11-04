@@ -1,0 +1,80 @@
+{
+  "tool": "image_gen built-in",
+  "tasks": [
+    {
+      "action": "lp",
+      "phase": 2,
+      "references": [
+        "src/main/resources/assets/textures/fighter/idle/idle_001.png",
+        "src/main/resources/assets/textures/fighter/lp/lp_001.png"
+      ],
+      "prompt": "Use case: identity-preserve. Create ONE individual photorealistic full-body fighting game animation frame, LP early anticipation between reference 1 (idle) and reference 2 (jab impact). Same exact real person, face, black short sleeve shirt, black trousers and dark sneakers, body proportions, camera and facing right. Pose: feet stay in original positions, lead elbow begins unfolding, fist advances only one quarter of the original jab trajectory, rear hand remains guarding chest. Preserve essential original punch and natural anatomy. Transparent PNG, no floor, no shadow, no text. Whole body including every finger and foot, consistent scale and ground baseline, centered with sufficient transparent margin. Sharpen photographic edges without changing identity. Deliver only this individual early-motion frame."
+    },
+    {
+      "action": "lp",
+      "phase": 3,
+      "source": "lp",
+      "prompt": "Use case: identity-preserve. ONE individual transparent PNG full-body realistic photographic fighting-game animation frame. Reference 1 is original IDLE person identity and guard; reference 2 is original LP IMPACT and defines the exact essential move (straight lead jab as in reference 2). Create phase 3 of six: PREPARATION: 60 percent along path from idle to reference impact. Punch elbow still clearly bent, fist approaching target; for kick knee lifted and bent, foot not yet extended. Preserve original trajectory. Same exact real person face, hair, shirt with original emblem/back lettering, trousers, sneakers, proportions and direction right. No redesign, no additional movement, no stylization. Keep camera consistent, person full body with all hands and feet inside frame, transparent margins. Fixed scale, feet baseline and body placement compatible with references; planted foot stays planted. Realistic sharp photographic contours, actual transparent alpha, no floor/shadow/labels."
+    },
+    {
+      "action": "lp",
+      "phase": 5,
+      "source": "lp",
+      "prompt": "Use case: identity-preserve. ONE individual transparent PNG full-body realistic photographic fighting-game animation frame. Reference 1 is original IDLE person identity and guard; reference 2 is original LP IMPACT and defines the exact essential move (straight lead jab as in reference 2). Create phase 5 of six: RECOVERY: immediately after original impact, striking limb retracts to halfway between impact and idle, elbow/knee bends naturally while torso begins returning to guard. Same exact real person face, hair, shirt with original emblem/back lettering, trousers, sneakers, proportions and direction right. No redesign, no additional movement, no stylization. Keep camera consistent, person full body with all hands and feet inside frame, transparent margins. Fixed scale, feet baseline and body placement compatible with references; planted foot stays planted. Realistic sharp photographic contours, actual transparent alpha, no floor/shadow/labels."
+    },
+    {
+      "action": "mp",
+      "phase": 2,
+      "source": "mp",
+      "prompt": "Use case: identity-preserve. ONE individual transparent PNG full-body realistic photographic fighting-game animation frame. Reference 1 is original IDLE person identity and guard; reference 2 is original MP IMPACT and defines the exact essential move (rear-hand cross punch with torso rotation as in reference 2). Create phase 2 of six: EARLY MOVEMENT: only 20 percent along the path from idle toward reference impact, begin shoulder rotation for punch or lift kicking heel and begin loading weight for kick. Same exact real person face, hair, shirt with original emblem/back lettering, trousers, sneakers, proportions and direction right. No redesign, no additional movement, no stylization. Keep camera consistent, person full body with all hands and feet inside frame, transparent margins. Fixed scale, feet baseline and body placement compatible with references; planted foot stays planted. Realistic sharp photographic contours, actual transparent alpha, no floor/shadow/labels."
+    },
+    {
+      "action": "mp",
+      "phase": 3,
+      "source": "mp",
+      "prompt": "Use case: identity-preserve. ONE individual transparent PNG full-body realistic photographic fighting-game animation frame. Reference 1 is original IDLE person identity and guard; reference 2 is original MP IMPACT and defines the exact essential move (rear-hand cross punch with torso rotation as in reference 2). Create phase 3 of six: PREPARATION: 60 percent along path from idle to reference impact. Punch elbow still clearly bent, fist approaching target; for kick knee lifted and bent, foot not yet extended. Preserve original trajectory. Same exact real person face, hair, shirt with original emblem/back lettering, trousers, sneakers, proportions and direction right. No redesign, no additional movement, no stylization. Keep camera consistent, person full body with all hands and feet inside frame, transparent margins. Fixed scale, feet baseline and body placement compatible with references; planted foot stays planted. Realistic sharp photographic contours, actual transparent alpha, no floor/shadow/labels."
+    },
+    {
+      "action": "mp",
+      "phase": 5,
+      "source": "mp",
+      "prompt": "Use case: identity-preserve. ONE individual transparent PNG full-body realistic photographic fighting-game animation frame. Reference 1 is original IDLE person identity and guard; reference 2 is original MP IMPACT and defines the exact essential move (rear-hand cross punch with torso rotation as in reference 2). Create phase 5 of six: RECOVERY: immediately after original impact, striking limb retracts to halfway between impact and idle, elbow/knee bends naturally while torso begins returning to guard. Same exact real person face, hair, shirt with original emblem/back lettering, trousers, sneakers, proportions and direction right. No redesign, no additional movement, no stylization. Keep camera consistent, person full body with all hands and feet inside frame, transparent margins. Fixed scale, feet baseline and body placement compatible with references; planted foot stays planted. Realistic sharp photographic contours, actual transparent alpha, no floor/shadow/labels."
+    },
+    {
+      "action": "lk",
+      "phase": 2,
+      "source": "lk",
+      "prompt": "Use case: identity-preserve. ONE individual transparent PNG full-body realistic photographic fighting-game animation frame. Reference 1 is original IDLE person identity and guard; reference 2 is original LK IMPACT and defines the exact essential move (low outward kick as in reference 2, preserve same kicking leg and low height). Create phase 2 of six: EARLY MOVEMENT: only 20 percent along the path from idle toward reference impact, begin shoulder rotation for punch or lift kicking heel and begin loading weight for kick. Same exact real person face, hair, shirt with original emblem/back lettering, trousers, sneakers, proportions and direction right. No redesign, no additional movement, no stylization. Keep camera consistent, person full body with all hands and feet inside frame, transparent margins. Fixed scale, feet baseline and body placement compatible with references; planted foot stays planted. Realistic sharp photographic contours, actual transparent alpha, no floor/shadow/labels."
+    },
+    {
+      "action": "lk",
+      "phase": 3,
+      "source": "lk",
+      "prompt": "Use case: identity-preserve. ONE individual transparent PNG full-body realistic photographic fighting-game animation frame. Reference 1 is original IDLE person identity and guard; reference 2 is original LK IMPACT and defines the exact essential move (low outward kick as in reference 2, preserve same kicking leg and low height). Create phase 3 of six: PREPARATION: 60 percent along path from idle to reference impact. Punch elbow still clearly bent, fist approaching target; for kick knee lifted and bent, foot not yet extended. Preserve original trajectory. Same exact real person face, hair, shirt with original emblem/back lettering, trousers, sneakers, proportions and direction right. No redesign, no additional movement, no stylization. Keep camera consistent, person full body with all hands and feet inside frame, transparent margins. Fixed scale, feet baseline and body placement compatible with references; planted foot stays planted. Realistic sharp photographic contours, actual transparent alpha, no floor/shadow/labels."
+    },
+    {
+      "action": "lk",
+      "phase": 5,
+      "source": "lk",
+      "prompt": "Use case: identity-preserve. ONE individual transparent PNG full-body realistic photographic fighting-game animation frame. Reference 1 is original IDLE person identity and guard; reference 2 is original LK IMPACT and defines the exact essential move (low outward kick as in reference 2, preserve same kicking leg and low height). Create phase 5 of six: RECOVERY: immediately after original impact, striking limb retracts to halfway between impact and idle, elbow/knee bends naturally while torso begins returning to guard. Same exact real person face, hair, shirt with original emblem/back lettering, trousers, sneakers, proportions and direction right. No redesign, no additional movement, no stylization. Keep camera consistent, person full body with all hands and feet inside frame, transparent margins. Fixed scale, feet baseline and body placement compatible with references; planted foot stays planted. Realistic sharp photographic contours, actual transparent alpha, no floor/shadow/labels."
+    },
+    {
+      "action": "mk",
+      "phase": 2,
+      "source": "hk",
+      "prompt": "Use case: identity-preserve. ONE individual transparent PNG full-body realistic photographic fighting-game animation frame. Reference 1 is original IDLE person identity and guard; reference 2 is original MK IMPACT and defines the exact essential move (front kick as in reference 2, preserve the same leg and moderate height). Create phase 2 of six: EARLY MOVEMENT: only 20 percent along the path from idle toward reference impact, begin shoulder rotation for punch or lift kicking heel and begin loading weight for kick. Same exact real person face, hair, shirt with original emblem/back lettering, trousers, sneakers, proportions and direction right. No redesign, no additional movement, no stylization. Keep camera consistent, person full body with all hands and feet inside frame, transparent margins. Fixed scale, feet baseline and body placement compatible with references; planted foot stays planted. Realistic sharp photographic contours, actual transparent alpha, no floor/shadow/labels."
+    },
+    {
+      "action": "mk",
+      "phase": 3,
+      "source": "hk",
+      "prompt": "Use case: identity-preserve. ONE individual transparent PNG full-body realistic photographic fighting-game animation frame. Reference 1 is original IDLE person identity and guard; reference 2 is original MK IMPACT and defines the exact essential move (front kick as in reference 2, preserve the same leg and moderate height). Create phase 3 of six: PREPARATION: 60 percent along path from idle to reference impact. Punch elbow still clearly bent, fist approaching target; for kick knee lifted and bent, foot not yet extended. Preserve original trajectory. Same exact real person face, hair, shirt with original emblem/back lettering, trousers, sneakers, proportions and direction right. No redesign, no additional movement, no stylization. Keep camera consistent, person full body with all hands and feet inside frame, transparent margins. Fixed scale, feet baseline and body placement compatible with references; planted foot stays planted. Realistic sharp photographic contours, actual transparent alpha, no floor/shadow/labels."
+    },
+    {
+      "action": "mk",
+      "phase": 5,
+      "source": "hk",
+      "prompt": "Use case: identity-preserve. ONE individual transparent PNG full-body realistic photographic fighting-game animation frame. Reference 1 is original IDLE person identity and guard; reference 2 is original MK IMPACT and defines the exact essential move (front kick as in reference 2, preserve the same leg and moderate height). Create phase 5 of six: RECOVERY: immediately after original impact, striking limb retracts to halfway between impact and idle, elbow/knee bends naturally while torso begins returning to guard. Same exact real person face, hair, shirt with original emblem/back lettering, trousers, sneakers, proportions and direction right. No redesign, no additional movement, no stylization. Keep camera consistent, person full body with all hands and feet inside frame, transparent margins. Fixed scale, feet baseline and body placement compatible with references; planted foot stays planted. Realistic sharp photographic contours, actual transparent alpha, no floor/shadow/labels."
+    }
+  ]
+}

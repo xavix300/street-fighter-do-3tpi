@@ -1,0 +1,962 @@
+﻿[
+    {
+        "action":  "lp",
+        "phase":  1,
+        "file":  "lp/lp_01.png",
+        "width":  128,
+        "height":  112,
+        "bounds":  [
+                       37,
+                       8,
+                       89,
+                       107
+                   ],
+        "transparentPixels":  12092,
+        "visiblePixels":  1863,
+        "sha256":  "1DB9D08A8AB8B59BF7D8CF74687FC0AA155684B59AA8D4CCE02AF414D7155A99"
+    },
+    {
+        "action":  "lp",
+        "phase":  2,
+        "file":  "lp/lp_02.png",
+        "width":  128,
+        "height":  112,
+        "bounds":  [
+                       38,
+                       8,
+                       89,
+                       107
+                   ],
+        "transparentPixels":  12141,
+        "visiblePixels":  2137,
+        "sha256":  "77A7048E7E9767EC85C1B20D2F62BFDF73B0E19131B4A80ABAFD31204EF8C44B"
+    },
+    {
+        "action":  "lp",
+        "phase":  3,
+        "file":  "lp/lp_03.png",
+        "width":  128,
+        "height":  112,
+        "bounds":  [
+                       36,
+                       8,
+                       90,
+                       107
+                   ],
+        "transparentPixels":  12225,
+        "visiblePixels":  2053,
+        "sha256":  "243B2D817807A29C431B8F45E7841BED7F53605E95C9CB5D61B855AC2AAEF57E"
+    },
+    {
+        "action":  "lp",
+        "phase":  4,
+        "file":  "lp/lp_04.png",
+        "width":  128,
+        "height":  112,
+        "bounds":  [
+                       30,
+                       8,
+                       96,
+                       107
+                   ],
+        "transparentPixels":  11895,
+        "visiblePixels":  2042,
+        "sha256":  "50A1AC2857CE06229FE96087ABD987B074C407B6CA65A60E12DD676907E88D1B"
+    },
+    {
+        "action":  "lp",
+        "phase":  5,
+        "file":  "lp/lp_05.png",
+        "width":  128,
+        "height":  112,
+        "bounds":  [
+                       39,
+                       8,
+                       87,
+                       107
+                   ],
+        "transparentPixels":  12203,
+        "visiblePixels":  2076,
+        "sha256":  "CEB74A08B7CF39F1475B31A0C9F4CBA33100B1D09013C7430ED1196BF965CF61"
+    },
+    {
+        "action":  "lp",
+        "phase":  6,
+        "file":  "lp/lp_06.png",
+        "width":  128,
+        "height":  112,
+        "bounds":  [
+                       37,
+                       8,
+                       89,
+                       107
+                   ],
+        "transparentPixels":  12092,
+        "visiblePixels":  1863,
+        "sha256":  "1DB9D08A8AB8B59BF7D8CF74687FC0AA155684B59AA8D4CCE02AF414D7155A99"
+    },
+    {
+        "action":  "mp",
+        "phase":  1,
+        "file":  "mp/mp_01.png",
+        "width":  128,
+        "height":  112,
+        "bounds":  [
+                       37,
+                       8,
+                       89,
+                       107
+                   ],
+        "transparentPixels":  12092,
+        "visiblePixels":  1863,
+        "sha256":  "1DB9D08A8AB8B59BF7D8CF74687FC0AA155684B59AA8D4CCE02AF414D7155A99"
+    },
+    {
+        "action":  "mp",
+        "phase":  2,
+        "file":  "mp/mp_02.png",
+        "width":  128,
+        "height":  112,
+        "bounds":  [
+                       41,
+                       8,
+                       86,
+                       107
+                   ],
+        "transparentPixels":  12294,
+        "visiblePixels":  1986,
+        "sha256":  "AA9AED6E75963EFEA5E4C9F93C9F84B2FAAADDA60B18F12683A0B5B8DB0F8575"
+    },
+    {
+        "action":  "mp",
+        "phase":  3,
+        "file":  "mp/mp_03.png",
+        "width":  128,
+        "height":  112,
+        "bounds":  [
+                       37,
+                       8,
+                       89,
+                       107
+                   ],
+        "transparentPixels":  12408,
+        "visiblePixels":  1875,
+        "sha256":  "6BDE588488E2E5BEF980D6A648B00C7E0540AFC975E37D8613B0B18649DF4A7B"
+    },
+    {
+        "action":  "mp",
+        "phase":  4,
+        "file":  "mp/mp_04.png",
+        "width":  128,
+        "height":  112,
+        "bounds":  [
+                       30,
+                       8,
+                       97,
+                       107
+                   ],
+        "transparentPixels":  12016,
+        "visiblePixels":  1898,
+        "sha256":  "E3C4FE5FDD03CF9E2EEE8BDE81EBAFE36386A761A9428635693C8615C91A9872"
+    },
+    {
+        "action":  "mp",
+        "phase":  5,
+        "file":  "mp/mp_05.png",
+        "width":  128,
+        "height":  112,
+        "bounds":  [
+                       42,
+                       8,
+                       85,
+                       107
+                   ],
+        "transparentPixels":  12404,
+        "visiblePixels":  1879,
+        "sha256":  "5EB24204D994E39775ED303DBB20CD488A5F3C1AC4C587CD7C3EE473C8E6EC8F"
+    },
+    {
+        "action":  "mp",
+        "phase":  6,
+        "file":  "mp/mp_06.png",
+        "width":  128,
+        "height":  112,
+        "bounds":  [
+                       37,
+                       8,
+                       89,
+                       107
+                   ],
+        "transparentPixels":  12092,
+        "visiblePixels":  1863,
+        "sha256":  "1DB9D08A8AB8B59BF7D8CF74687FC0AA155684B59AA8D4CCE02AF414D7155A99"
+    },
+    {
+        "action":  "lk",
+        "phase":  1,
+        "file":  "lk/lk_01.png",
+        "width":  128,
+        "height":  112,
+        "bounds":  [
+                       37,
+                       8,
+                       89,
+                       107
+                   ],
+        "transparentPixels":  12092,
+        "visiblePixels":  1863,
+        "sha256":  "1DB9D08A8AB8B59BF7D8CF74687FC0AA155684B59AA8D4CCE02AF414D7155A99"
+    },
+    {
+        "action":  "lk",
+        "phase":  2,
+        "file":  "lk/lk_02.png",
+        "width":  128,
+        "height":  112,
+        "bounds":  [
+                       38,
+                       8,
+                       88,
+                       107
+                   ],
+        "transparentPixels":  12296,
+        "visiblePixels":  1984,
+        "sha256":  "739A4685B2236A32CB6F9ABA18F9B7163142B8AE5CB9DEC5C120A9BBF9D98883"
+    },
+    {
+        "action":  "lk",
+        "phase":  3,
+        "file":  "lk/lk_03.png",
+        "width":  128,
+        "height":  112,
+        "bounds":  [
+                       40,
+                       8,
+                       86,
+                       107
+                   ],
+        "transparentPixels":  12372,
+        "visiblePixels":  1916,
+        "sha256":  "9163A1BCC7076CEA870D3E46C03EAED9DCBF7D27ABC200510AE562A938FE6F8A"
+    },
+    {
+        "action":  "lk",
+        "phase":  4,
+        "file":  "lk/lk_04.png",
+        "width":  128,
+        "height":  112,
+        "bounds":  [
+                       39,
+                       8,
+                       88,
+                       107
+                   ],
+        "transparentPixels":  12252,
+        "visiblePixels":  1747,
+        "sha256":  "6FBB951B3F8A279D408C541B7F76B067B642E27844EE52CE4A4F19978DEE5086"
+    },
+    {
+        "action":  "lk",
+        "phase":  5,
+        "file":  "lk/lk_05.png",
+        "width":  128,
+        "height":  112,
+        "bounds":  [
+                       42,
+                       8,
+                       85,
+                       107
+                   ],
+        "transparentPixels":  12267,
+        "visiblePixels":  2012,
+        "sha256":  "145A15D9CC8E965B15C21B7A61D358E6A7E3F8D7D5729436DBBEEACB62D53B3E"
+    },
+    {
+        "action":  "lk",
+        "phase":  6,
+        "file":  "lk/lk_06.png",
+        "width":  128,
+        "height":  112,
+        "bounds":  [
+                       37,
+                       8,
+                       89,
+                       107
+                   ],
+        "transparentPixels":  12092,
+        "visiblePixels":  1863,
+        "sha256":  "1DB9D08A8AB8B59BF7D8CF74687FC0AA155684B59AA8D4CCE02AF414D7155A99"
+    },
+    {
+        "action":  "mk",
+        "phase":  1,
+        "file":  "mk/mk_01.png",
+        "width":  128,
+        "height":  112,
+        "bounds":  [
+                       37,
+                       8,
+                       89,
+                       107
+                   ],
+        "transparentPixels":  12092,
+        "visiblePixels":  1863,
+        "sha256":  "1DB9D08A8AB8B59BF7D8CF74687FC0AA155684B59AA8D4CCE02AF414D7155A99"
+    },
+    {
+        "action":  "mk",
+        "phase":  2,
+        "file":  "mk/mk_02.png",
+        "width":  128,
+        "height":  112,
+        "bounds":  [
+                       38,
+                       8,
+                       89,
+                       107
+                   ],
+        "transparentPixels":  12263,
+        "visiblePixels":  2017,
+        "sha256":  "0E163451D6E2B87EC38205007EACBABC7C1A51C9BC773026EF2BC249C61E6AE9"
+    },
+    {
+        "action":  "mk",
+        "phase":  3,
+        "file":  "mk/mk_03.png",
+        "width":  128,
+        "height":  112,
+        "bounds":  [
+                       40,
+                       8,
+                       87,
+                       107
+                   ],
+        "transparentPixels":  12450,
+        "visiblePixels":  1838,
+        "sha256":  "542814EA20E79F3B1D8DF02AE5A3B7CAFBC04C65FD342EB083801A107C4DCF66"
+    },
+    {
+        "action":  "mk",
+        "phase":  4,
+        "file":  "mk/mk_04.png",
+        "width":  128,
+        "height":  112,
+        "bounds":  [
+                       28,
+                       8,
+                       99,
+                       107
+                   ],
+        "transparentPixels":  12102,
+        "visiblePixels":  1867,
+        "sha256":  "FA287DE93B194771C563EE9E0F52D18CDA9C991FF5339F3951519A01F7C3A24F"
+    },
+    {
+        "action":  "mk",
+        "phase":  5,
+        "file":  "mk/mk_05.png",
+        "width":  128,
+        "height":  112,
+        "bounds":  [
+                       43,
+                       8,
+                       84,
+                       107
+                   ],
+        "transparentPixels":  12593,
+        "visiblePixels":  1693,
+        "sha256":  "159C81D5B61F15948D1A6041560A03DA15F69F061DD3BE6DD06B519577DC3397"
+    },
+    {
+        "action":  "mk",
+        "phase":  6,
+        "file":  "mk/mk_06.png",
+        "width":  128,
+        "height":  112,
+        "bounds":  [
+                       37,
+                       8,
+                       89,
+                       107
+                   ],
+        "transparentPixels":  12092,
+        "visiblePixels":  1863,
+        "sha256":  "1DB9D08A8AB8B59BF7D8CF74687FC0AA155684B59AA8D4CCE02AF414D7155A99"
+    },
+    {
+        "action":  "crouch_lp",
+        "phase":  1,
+        "file":  "crouch_lp/crouch_lp_01.png",
+        "width":  128,
+        "height":  112,
+        "bounds":  [
+                       41,
+                       38,
+                       86,
+                       107
+                   ],
+        "transparentPixels":  12920,
+        "visiblePixels":  1354,
+        "sha256":  "CFE3189F49D94B42D9EB1A1AA78CAB13EA32BCA1C630080E7F23911EEA272335"
+    },
+    {
+        "action":  "crouch_lp",
+        "phase":  2,
+        "file":  "crouch_lp/crouch_lp_02.png",
+        "width":  128,
+        "height":  112,
+        "bounds":  [
+                       36,
+                       38,
+                       91,
+                       107
+                   ],
+        "transparentPixels":  12555,
+        "visiblePixels":  1724,
+        "sha256":  "0EC83A0BDE1AD53A61866A895ED408FAF6C0C451B57EFAB97332FBA3D2D0ADFD"
+    },
+    {
+        "action":  "crouch_lp",
+        "phase":  3,
+        "file":  "crouch_lp/crouch_lp_03.png",
+        "width":  128,
+        "height":  112,
+        "bounds":  [
+                       37,
+                       38,
+                       90,
+                       107
+                   ],
+        "transparentPixels":  12572,
+        "visiblePixels":  1718,
+        "sha256":  "61097D5D1E06E32A5696813607BD5FCCE61E61CD684B92255F7F54E6B3EACD44"
+    },
+    {
+        "action":  "crouch_lp",
+        "phase":  4,
+        "file":  "crouch_lp/crouch_lp_04.png",
+        "width":  128,
+        "height":  112,
+        "bounds":  [
+                       25,
+                       38,
+                       102,
+                       107
+                   ],
+        "transparentPixels":  12165,
+        "visiblePixels":  2116,
+        "sha256":  "9775212D6B21E9F0A031B7875A4ABE6251187FDACAC42EB163B69EC96E3F8B41"
+    },
+    {
+        "action":  "crouch_lp",
+        "phase":  5,
+        "file":  "crouch_lp/crouch_lp_05.png",
+        "width":  128,
+        "height":  112,
+        "bounds":  [
+                       37,
+                       38,
+                       90,
+                       107
+                   ],
+        "transparentPixels":  12503,
+        "visiblePixels":  1793,
+        "sha256":  "C451E0DA4983463452AA734A34C833CD4DE1B42E03CE6DC94569C4B612754EEA"
+    },
+    {
+        "action":  "crouch_lp",
+        "phase":  6,
+        "file":  "crouch_lp/crouch_lp_06.png",
+        "width":  128,
+        "height":  112,
+        "bounds":  [
+                       41,
+                       38,
+                       86,
+                       107
+                   ],
+        "transparentPixels":  12920,
+        "visiblePixels":  1354,
+        "sha256":  "CFE3189F49D94B42D9EB1A1AA78CAB13EA32BCA1C630080E7F23911EEA272335"
+    },
+    {
+        "action":  "crouch_mp",
+        "phase":  1,
+        "file":  "crouch_mp/crouch_mp_01.png",
+        "width":  128,
+        "height":  112,
+        "bounds":  [
+                       41,
+                       38,
+                       86,
+                       107
+                   ],
+        "transparentPixels":  12920,
+        "visiblePixels":  1354,
+        "sha256":  "CFE3189F49D94B42D9EB1A1AA78CAB13EA32BCA1C630080E7F23911EEA272335"
+    },
+    {
+        "action":  "crouch_mp",
+        "phase":  2,
+        "file":  "crouch_mp/crouch_mp_02.png",
+        "width":  128,
+        "height":  112,
+        "bounds":  [
+                       44,
+                       38,
+                       83,
+                       107
+                   ],
+        "transparentPixels":  12827,
+        "visiblePixels":  1471,
+        "sha256":  "05DD8A245A2F0A1CD1774CC85D9E5037511211D09FCAAD9A6FBFCB6A35084E48"
+    },
+    {
+        "action":  "crouch_mp",
+        "phase":  3,
+        "file":  "crouch_mp/crouch_mp_03.png",
+        "width":  128,
+        "height":  112,
+        "bounds":  [
+                       36,
+                       38,
+                       91,
+                       107
+                   ],
+        "transparentPixels":  12568,
+        "visiblePixels":  1720,
+        "sha256":  "4C2D3B2C84CB7E5EADCEDF890F0F93BDBBC1F683F9711B42A0236E602E84B186"
+    },
+    {
+        "action":  "crouch_mp",
+        "phase":  4,
+        "file":  "crouch_mp/crouch_mp_04.png",
+        "width":  128,
+        "height":  112,
+        "bounds":  [
+                       26,
+                       38,
+                       100,
+                       107
+                   ],
+        "transparentPixels":  12418,
+        "visiblePixels":  1879,
+        "sha256":  "DD163697A31550E256017D46C0C261AAD967F2AC658ED61CC9CA7DB4855A8EF6"
+    },
+    {
+        "action":  "crouch_mp",
+        "phase":  5,
+        "file":  "crouch_mp/crouch_mp_05.png",
+        "width":  128,
+        "height":  112,
+        "bounds":  [
+                       40,
+                       38,
+                       87,
+                       107
+                   ],
+        "transparentPixels":  12760,
+        "visiblePixels":  1523,
+        "sha256":  "D89691C82B689C325D0934AD8117972291166982DC5B5469AAAD347840A978D7"
+    },
+    {
+        "action":  "crouch_mp",
+        "phase":  6,
+        "file":  "crouch_mp/crouch_mp_06.png",
+        "width":  128,
+        "height":  112,
+        "bounds":  [
+                       41,
+                       38,
+                       86,
+                       107
+                   ],
+        "transparentPixels":  12920,
+        "visiblePixels":  1354,
+        "sha256":  "CFE3189F49D94B42D9EB1A1AA78CAB13EA32BCA1C630080E7F23911EEA272335"
+    },
+    {
+        "action":  "crouch_hp",
+        "phase":  1,
+        "file":  "crouch_hp/crouch_hp_01.png",
+        "width":  128,
+        "height":  112,
+        "bounds":  [
+                       41,
+                       38,
+                       86,
+                       107
+                   ],
+        "transparentPixels":  12920,
+        "visiblePixels":  1354,
+        "sha256":  "CFE3189F49D94B42D9EB1A1AA78CAB13EA32BCA1C630080E7F23911EEA272335"
+    },
+    {
+        "action":  "crouch_hp",
+        "phase":  2,
+        "file":  "crouch_hp/crouch_hp_02.png",
+        "width":  128,
+        "height":  112,
+        "bounds":  [
+                       32,
+                       38,
+                       95,
+                       107
+                   ],
+        "transparentPixels":  12165,
+        "visiblePixels":  2125,
+        "sha256":  "225677318C2520DAF84EA8F0FA5F413C9D7CBD5A28446F404E215108BC649BF4"
+    },
+    {
+        "action":  "crouch_hp",
+        "phase":  3,
+        "file":  "crouch_hp/crouch_hp_03.png",
+        "width":  128,
+        "height":  112,
+        "bounds":  [
+                       33,
+                       38,
+                       94,
+                       107
+                   ],
+        "transparentPixels":  12499,
+        "visiblePixels":  1788,
+        "sha256":  "A43F911FAADABEA704C9BCC1BE2260EA24164464F44601239A04C2A95B139C49"
+    },
+    {
+        "action":  "crouch_hp",
+        "phase":  4,
+        "file":  "crouch_hp/crouch_hp_04.png",
+        "width":  128,
+        "height":  112,
+        "bounds":  [
+                       28,
+                       38,
+                       99,
+                       107
+                   ],
+        "transparentPixels":  12550,
+        "visiblePixels":  1747,
+        "sha256":  "455549C0EAB19A9733A83940C9AF6C64677FA85B927857193801EB2A1A777A71"
+    },
+    {
+        "action":  "crouch_hp",
+        "phase":  5,
+        "file":  "crouch_hp/crouch_hp_05.png",
+        "width":  128,
+        "height":  112,
+        "bounds":  [
+                       29,
+                       38,
+                       97,
+                       107
+                   ],
+        "transparentPixels":  12122,
+        "visiblePixels":  2151,
+        "sha256":  "CB0CBC703BA4F2F39D8A83B3F62C77937267EBFB0168E0CB45C57104EC2E3BE6"
+    },
+    {
+        "action":  "crouch_hp",
+        "phase":  6,
+        "file":  "crouch_hp/crouch_hp_06.png",
+        "width":  128,
+        "height":  112,
+        "bounds":  [
+                       41,
+                       38,
+                       86,
+                       107
+                   ],
+        "transparentPixels":  12920,
+        "visiblePixels":  1354,
+        "sha256":  "CFE3189F49D94B42D9EB1A1AA78CAB13EA32BCA1C630080E7F23911EEA272335"
+    },
+    {
+        "action":  "crouch_lk",
+        "phase":  1,
+        "file":  "crouch_lk/crouch_lk_01.png",
+        "width":  128,
+        "height":  112,
+        "bounds":  [
+                       41,
+                       38,
+                       86,
+                       107
+                   ],
+        "transparentPixels":  12920,
+        "visiblePixels":  1354,
+        "sha256":  "CFE3189F49D94B42D9EB1A1AA78CAB13EA32BCA1C630080E7F23911EEA272335"
+    },
+    {
+        "action":  "crouch_lk",
+        "phase":  2,
+        "file":  "crouch_lk/crouch_lk_02.png",
+        "width":  128,
+        "height":  112,
+        "bounds":  [
+                       30,
+                       38,
+                       96,
+                       107
+                   ],
+        "transparentPixels":  12211,
+        "visiblePixels":  2075,
+        "sha256":  "033644FF01F223910957036800E6ADD484FE7E6FC0D3BEDB4CDBC0E23F36F034"
+    },
+    {
+        "action":  "crouch_lk",
+        "phase":  3,
+        "file":  "crouch_lk/crouch_lk_03.png",
+        "width":  128,
+        "height":  112,
+        "bounds":  [
+                       26,
+                       38,
+                       101,
+                       107
+                   ],
+        "transparentPixels":  12083,
+        "visiblePixels":  2197,
+        "sha256":  "8D0FE28582A00CC1E7A8D9251688449F956AA8C0012CC3EE2D9E97AF508D9F99"
+    },
+    {
+        "action":  "crouch_lk",
+        "phase":  4,
+        "file":  "crouch_lk/crouch_lk_04.png",
+        "width":  128,
+        "height":  112,
+        "bounds":  [
+                       18,
+                       38,
+                       109,
+                       107
+                   ],
+        "transparentPixels":  11812,
+        "visiblePixels":  2465,
+        "sha256":  "0320F4493A1662D8F9919E2C579CAA27B872FD00B214162CF66E6D6D18548677"
+    },
+    {
+        "action":  "crouch_lk",
+        "phase":  5,
+        "file":  "crouch_lk/crouch_lk_05.png",
+        "width":  128,
+        "height":  112,
+        "bounds":  [
+                       30,
+                       38,
+                       97,
+                       107
+                   ],
+        "transparentPixels":  12252,
+        "visiblePixels":  2024,
+        "sha256":  "26D1BF7529E642B4DECD694557EF462AC2E805F8D13E94FDBD6C804E4EDAC580"
+    },
+    {
+        "action":  "crouch_lk",
+        "phase":  6,
+        "file":  "crouch_lk/crouch_lk_06.png",
+        "width":  128,
+        "height":  112,
+        "bounds":  [
+                       41,
+                       38,
+                       86,
+                       107
+                   ],
+        "transparentPixels":  12920,
+        "visiblePixels":  1354,
+        "sha256":  "CFE3189F49D94B42D9EB1A1AA78CAB13EA32BCA1C630080E7F23911EEA272335"
+    },
+    {
+        "action":  "crouch_mk",
+        "phase":  1,
+        "file":  "crouch_mk/crouch_mk_01.png",
+        "width":  128,
+        "height":  112,
+        "bounds":  [
+                       41,
+                       38,
+                       86,
+                       107
+                   ],
+        "transparentPixels":  12920,
+        "visiblePixels":  1354,
+        "sha256":  "CFE3189F49D94B42D9EB1A1AA78CAB13EA32BCA1C630080E7F23911EEA272335"
+    },
+    {
+        "action":  "crouch_mk",
+        "phase":  2,
+        "file":  "crouch_mk/crouch_mk_02.png",
+        "width":  128,
+        "height":  112,
+        "bounds":  [
+                       34,
+                       38,
+                       93,
+                       107
+                   ],
+        "transparentPixels":  12349,
+        "visiblePixels":  1933,
+        "sha256":  "5D4609A676C18C4C6B98852F8BC021F79EDACF7A27D15FD715A459D3EC0C9A48"
+    },
+    {
+        "action":  "crouch_mk",
+        "phase":  3,
+        "file":  "crouch_mk/crouch_mk_03.png",
+        "width":  128,
+        "height":  112,
+        "bounds":  [
+                       35,
+                       38,
+                       92,
+                       107
+                   ],
+        "transparentPixels":  12537,
+        "visiblePixels":  1755,
+        "sha256":  "B5609BE1015DCE75AF6E7209C2D737A442541374671B3F27578B0BE35CBEADDE"
+    },
+    {
+        "action":  "crouch_mk",
+        "phase":  4,
+        "file":  "crouch_mk/crouch_mk_04.png",
+        "width":  128,
+        "height":  112,
+        "bounds":  [
+                       21,
+                       38,
+                       105,
+                       107
+                   ],
+        "transparentPixels":  11995,
+        "visiblePixels":  2285,
+        "sha256":  "4C4CAA47EFC7CDCE405B2067132B2F64A695031AFA564C9C28BEF2CF9C8BF921"
+    },
+    {
+        "action":  "crouch_mk",
+        "phase":  5,
+        "file":  "crouch_mk/crouch_mk_05.png",
+        "width":  128,
+        "height":  112,
+        "bounds":  [
+                       32,
+                       38,
+                       95,
+                       107
+                   ],
+        "transparentPixels":  12384,
+        "visiblePixels":  1890,
+        "sha256":  "B8FAFA3D518482CB8762B2BFA78F39EAC5645E753DEF99E65E136655ACA58C45"
+    },
+    {
+        "action":  "crouch_mk",
+        "phase":  6,
+        "file":  "crouch_mk/crouch_mk_06.png",
+        "width":  128,
+        "height":  112,
+        "bounds":  [
+                       41,
+                       38,
+                       86,
+                       107
+                   ],
+        "transparentPixels":  12920,
+        "visiblePixels":  1354,
+        "sha256":  "CFE3189F49D94B42D9EB1A1AA78CAB13EA32BCA1C630080E7F23911EEA272335"
+    },
+    {
+        "action":  "crouch_hk",
+        "phase":  1,
+        "file":  "crouch_hk/crouch_hk_01.png",
+        "width":  128,
+        "height":  112,
+        "bounds":  [
+                       41,
+                       38,
+                       86,
+                       107
+                   ],
+        "transparentPixels":  12920,
+        "visiblePixels":  1354,
+        "sha256":  "CFE3189F49D94B42D9EB1A1AA78CAB13EA32BCA1C630080E7F23911EEA272335"
+    },
+    {
+        "action":  "crouch_hk",
+        "phase":  2,
+        "file":  "crouch_hk/crouch_hk_02.png",
+        "width":  128,
+        "height":  112,
+        "bounds":  [
+                       24,
+                       38,
+                       103,
+                       107
+                   ],
+        "transparentPixels":  12237,
+        "visiblePixels":  2049,
+        "sha256":  "01A85ED8B05C9FF470ABE3369C0DE5B239783FCBCA28A928E9C0741EF6BDE563"
+    },
+    {
+        "action":  "crouch_hk",
+        "phase":  3,
+        "file":  "crouch_hk/crouch_hk_03.png",
+        "width":  128,
+        "height":  112,
+        "bounds":  [
+                       29,
+                       38,
+                       98,
+                       107
+                   ],
+        "transparentPixels":  12228,
+        "visiblePixels":  2068,
+        "sha256":  "5E88483E13BF1B1DA88261B00F1600C26456BE4DB3322B081A368CFBB53B0678"
+    },
+    {
+        "action":  "crouch_hk",
+        "phase":  4,
+        "file":  "crouch_hk/crouch_hk_04.png",
+        "width":  128,
+        "height":  112,
+        "bounds":  [
+                       16,
+                       38,
+                       111,
+                       107
+                   ],
+        "transparentPixels":  12011,
+        "visiblePixels":  2275,
+        "sha256":  "282F982BD260987ACBD19FF6B9DA3F8B322A14E7B8CDDCEBCF81F8181D1CB6BB"
+    },
+    {
+        "action":  "crouch_hk",
+        "phase":  5,
+        "file":  "crouch_hk/crouch_hk_05.png",
+        "width":  128,
+        "height":  112,
+        "bounds":  [
+                       28,
+                       38,
+                       98,
+                       107
+                   ],
+        "transparentPixels":  12263,
+        "visiblePixels":  2024,
+        "sha256":  "357A44D87B06BF1FC7AAFE97CDBA575DEBCA21F884CD0D840336C41E0817FCCC"
+    },
+    {
+        "action":  "crouch_hk",
+        "phase":  6,
+        "file":  "crouch_hk/crouch_hk_06.png",
+        "width":  128,
+        "height":  112,
+        "bounds":  [
+                       41,
+                       38,
+                       86,
+                       107
+                   ],
+        "transparentPixels":  12920,
+        "visiblePixels":  1354,
+        "sha256":  "CFE3189F49D94B42D9EB1A1AA78CAB13EA32BCA1C630080E7F23911EEA272335"
+    }
+]
