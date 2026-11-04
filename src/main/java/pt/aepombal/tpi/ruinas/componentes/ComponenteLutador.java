@@ -12,6 +12,7 @@ import pt.aepombal.tpi.ruinas.modelo.ResultadoImpacto;
 import pt.aepombal.tpi.ruinas.modelo.RegraDefesa;
 import pt.aepombal.tpi.ruinas.modelo.SaltoLutador;
 import pt.aepombal.tpi.ruinas.modelo.TipoCaixa;
+import pt.aepombal.tpi.ruinas.modelo.TemposRyu;
 
 import java.util.List;
 import java.util.Map;
@@ -37,7 +38,6 @@ public final class ComponenteLutador extends Component {
     private static final double RECUPERACAO_GUARDA_POR_SEGUNDO = 18;
     private static final double ATRASO_RECUPERACAO_GUARDA = 1.25;
     private static final int STUN_QUEBRA_GUARDA = 54;
-    private static final int STUN_BLOQUEIO_MINIMO = 14;
     private static final double JANELA_BUFFER_ATAQUE = 7.0 / 60.0;
 
     private final LadoLutador lado;
@@ -56,6 +56,8 @@ public final class ComponenteLutador extends Component {
     private double tempoRecuo;
     private double velocidadeRecuo;
     private double tempoBufferAtaque;
+    private int framesRecuperacaoExtra;
+    private double acumuladorCombate;
     private final SaltoLutador salto = new SaltoLutador();
     private int movimento;
     private int movimentoRelativo;
@@ -198,7 +200,7 @@ public final class ComponenteLutador extends Component {
                 return new ResultadoImpacto(false, true, STUN_QUEBRA_GUARDA, 0);
             }
 
-            int blockStun = Math.max(STUN_BLOQUEIO_MINIMO, hitbox.blockStun());
+            int blockStun = hitbox.blockStun();
             tempoStun = blockStun / 60.0;
             mudarAcao(acao == AcaoCombate.LOW_BLOCK ? AcaoCombate.LOW_BLOCK : AcaoCombate.BLOCK);
             return new ResultadoImpacto(true, false, blockStun, 0);
@@ -224,7 +226,8 @@ public final class ComponenteLutador extends Component {
         for (int i = indiceFrame + 1; i < animacaoAtual().frames().size(); i++) {
             restantes += animacaoAtual().frames().get(i).duracaoFrames() * ESCALA_TEMPO_ATAQUE;
         }
-        return (int) Math.ceil(restantes);
+        // A vantagem oficial conta a partir do fim do frame em que ocorre o contacto.
+        return Math.max(0, (int) Math.ceil(restantes - 1e-8) - 1);
     }
 
     /** Indica se um novo golpe pode continuar o combo atual. */
@@ -251,6 +254,15 @@ public final class ComponenteLutador extends Component {
 
     @Override
     public void onUpdate(double tpf) {
+        acumuladorCombate += tpf;
+        // Não saltar janelas ativas de 2f quando o desenho fica abaixo de 60 FPS.
+        while (acumuladorCombate + 1e-9 >= 1.0 / 60.0) {
+            acumuladorCombate = Math.max(0, acumuladorCombate - 1.0 / 60.0);
+            atualizarPasso(1.0 / 60.0);
+        }
+    }
+
+    private void atualizarPasso(double tpf) {
         if (!gestor.rondaAtiva()) {
             if (acao == AcaoCombate.VICTORY) atualizarFrame(tpf);
             return;
@@ -263,6 +275,7 @@ public final class ComponenteLutador extends Component {
             return;
         }
         atualizarStun(tpf);
+        framesRecuperacaoExtra = Math.max(0, framesRecuperacaoExtra - 1);
         atualizarGuarda(tpf);
         atualizarSalto(tpf);
         atualizarFrame(tpf);
@@ -335,8 +348,11 @@ public final class ComponenteLutador extends Component {
     }
 
     private boolean podeCancelarPara(AcaoCombate proximoAtaque) {
-        return salto.noChao() && acao.eAtaque() && acertoRegistado
-                && proximoAtaque.nivelForca() > acao.nivelForca();
+        // SF6 não permite a cadeia universal leve -> médio -> forte do protótipo.
+        boolean rapidCancel = acao == AcaoCombate.LP || acao == AcaoCombate.CROUCH_LP
+                || acao == AcaoCombate.CROUCH_LK;
+        return salto.noChao() && rapidCancel && acertoRegistado
+                && proximoAtaque.nivelForca() == 1;
     }
 
     private void resolverComandosMantidos() {
@@ -420,6 +436,7 @@ public final class ComponenteLutador extends Component {
             salto.atualizar(tpf);
             entity.setY(CHAO_Y + salto.altura());
             if (salto.noChao()) {
+                if (salto.ataqueUsado()) framesRecuperacaoExtra = 3;
                 if (ataquePendente != null && ataquePendente.eAtaqueAereo()) ataquePendente = null;
                 if (acao.eSalto() || acao.eAtaqueAereo()) {
                     mudarAcao(acaoParaMovimento());
@@ -450,6 +467,8 @@ public final class ComponenteLutador extends Component {
             avancarFrame();
             duracao = duracaoAtualFrames() / 60.0;
         }
+        // As poses intermédias avançam mesmo quando o frame lógico ainda não mudou.
+        atualizarVista();
     }
 
     private int duracaoAtualFrames() {
@@ -466,13 +485,17 @@ public final class ComponenteLutador extends Component {
         } else if (acao.eSalto()) {
             indiceFrame = animacaoAtual().frames().size() - 1;
         } else if (acao != AcaoCombate.KNOCKOUT && acao != AcaoCombate.HIT
-                && acao != AcaoCombate.VICTORY) {
+                 && acao != AcaoCombate.VICTORY) {
+            if (acao.eAtaque() && !acao.eAtaqueAereo() && !acertoRegistado) {
+                framesRecuperacaoExtra = TemposRyu.de(acao).extraFalha();
+            }
             mudarAcao(acaoParaMovimento());
         }
     }
 
     private boolean podeControlar() {
         return gestor.rondaAtiva() && vida > 0 && tempoStun == 0 && tempoHitstop == 0
+                && framesRecuperacaoExtra == 0
                 && !acao.eAtaque()
                 && acao != AcaoCombate.HIT && acao != AcaoCombate.KNOCKOUT
                 && acao != AcaoCombate.TAUNT;
@@ -492,7 +515,10 @@ public final class ComponenteLutador extends Component {
     }
 
     private void atualizarVista() {
-        vista.mostrar(acao, indiceFrame);
+        int pose = acao.eAtaque()
+                ? animacaoAtual().indiceAtaque40(indiceFrame, tempoNoFrame * 60.0 / ESCALA_TEMPO_ATAQUE)
+                : -1;
+        vista.mostrar(acao, indiceFrame, pose);
         vista.inclinarSalto(acao == AcaoCombate.JUMP_SIDE ? -8 * salto.direcao() : 0);
     }
 

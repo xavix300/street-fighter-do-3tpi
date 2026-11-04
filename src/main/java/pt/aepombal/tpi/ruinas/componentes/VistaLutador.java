@@ -27,6 +27,7 @@ public final class VistaLutador extends Group {
 
     private final Group corpo = new Group();
     private static final Map<AcaoCombate, List<Image>> SPRITES = carregarSprites();
+    private static final Map<AcaoCombate, List<Image>> ATAQUES_40 = carregarAtaques40();
     private final ImageView sprite = new ImageView();
     private final Line bracoTras = membro();
     private final Line bracoFrente = membro();
@@ -98,7 +99,13 @@ public final class VistaLutador extends Group {
     }
 
     public void mostrar(AcaoCombate acao, int frame) {
-        List<Image> imagens = SPRITES.get(acao);
+        mostrar(acao, frame, -1);
+    }
+
+    public void mostrar(AcaoCombate acao, int frame, int frameAtaque) {
+        boolean usa40 = frameAtaque >= 0 && ATAQUES_40.containsKey(acao);
+        List<Image> imagens = usa40 ? ATAQUES_40.get(acao) : SPRITES.get(acao);
+        int indice = usa40 ? frameAtaque : frame;
         boolean temSprite = imagens != null && !imagens.isEmpty();
         // Os novos frames baixos já estão alinhados na tela comum.
         sprite.setX(-32);
@@ -109,7 +116,7 @@ public final class VistaLutador extends Group {
         corpo.setVisible(!temSprite);
         sprite.setScaleX(orientacao);
         if (temSprite) {
-            sprite.setImage(imagens.get(Math.min(Math.max(frame, 0), imagens.size() - 1)));
+            sprite.setImage(imagens.get(Math.min(Math.max(indice, 0), imagens.size() - 1)));
             return;
         }
         reporPose();
@@ -144,6 +151,27 @@ public final class VistaLutador extends Group {
                 }
             }
             sprites.put(acao, imagens);
+        }
+        return sprites;
+    }
+
+    private static Map<AcaoCombate, List<Image>> carregarAtaques40() {
+        Map<AcaoCombate, List<Image>> sprites = new EnumMap<>(AcaoCombate.class);
+        for (AcaoCombate acao : AcaoCombate.values()) {
+            if (!acao.eAtaque()) continue;
+            List<Image> imagens = new ArrayList<>();
+            for (int i = 1; i <= 40; i++) {
+                try (InputStream ficheiro = VistaLutador.class.getResourceAsStream(acao.caminhoAtaque40(i))) {
+                    if (ficheiro == null) break;
+                    Image imagem = new Image(ficheiro);
+                    if (imagem.isError()) break;
+                    imagens.add(imagem);
+                } catch (java.io.IOException e) {
+                    break;
+                }
+            }
+            // Nunca carregar uma sequência incompleta durante a preparação dos recursos.
+            if (imagens.size() == 40) sprites.put(acao, List.copyOf(imagens));
         }
         return sprites;
     }

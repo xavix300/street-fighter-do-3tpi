@@ -17,6 +17,12 @@
     </properties>
 
     <dependencies>
+        <!-- Acesso direto às DLLs XInput do Windows, sem processos externos. -->
+        <dependency>
+            <groupId>net.java.dev.jna</groupId>
+            <artifactId>jna</artifactId>
+            <version>5.17.0</version>
+        </dependency>
         <!-- FXGL 21.x exige JDK 21. Se passarem para o JDK 25, usem a versão 25.0.1.
              O JavaFX vem incluído como dependência do FXGL: não é preciso instalar nada. -->
         <dependency>

@@ -101,7 +101,8 @@ public final class StreetFrameApp extends GameApplication {
         getGameWorld().addEntityFactory(new FabricaEntidades(gestor));
         gestor.criarMundo();
         esquerdaPremida = direitaPremida = baixoPremido = false;
-        if (botoesComando == 0) comando.iniciar();
+        comando.iniciar();
+        botoesComando = 0;
     }
 
     @Override

@@ -79,9 +79,9 @@ public final class AnimacoesTeste {
                         "Dano excessivo ou inconsistente: " + acao + " / " + hitbox.dano());
             }
         }
-        verificar(animacoes.get(AcaoCombate.LP).frames().stream().mapToInt(FrameCombate::duracaoFrames).sum() == 24,
+        verificar(animacoes.get(AcaoCombate.LP).frames().stream().mapToInt(FrameCombate::duracaoFrames).sum() == 13,
                 "Duração LP alterada");
-        verificar(animacoes.get(AcaoCombate.MK).frames().stream().mapToInt(FrameCombate::duracaoFrames).sum() == 33,
+        verificar(animacoes.get(AcaoCombate.MK).frames().stream().mapToInt(FrameCombate::duracaoFrames).sum() == 29,
                 "Duração MK alterada");
         for (var base : new AcaoCombate[]{AcaoCombate.LP, AcaoCombate.MP, AcaoCombate.HP,
                 AcaoCombate.LK, AcaoCombate.MK, AcaoCombate.HK}) {

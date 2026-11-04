@@ -13,7 +13,7 @@ import java.util.TreeMap;
 // [IA] Leitura UTF-8 do ficheiro externo que define os dados de hitbox por frame.
 /**
  * Lê os dados de combate de um CSV. Alterar este ficheiro muda as caixas,
- * dano e tempos sem recompilar o jogo.
+ * dano e tempos visuais sem recompilar o jogo. Os tempos dos ataques são os de TemposRyu.
  */
 public final class RepositorioFrames {
 
@@ -72,7 +72,9 @@ public final class RepositorioFrames {
                 sequencia = List.of(new FrameCombate(arranque, corpo),
                         new FrameCombate(4, pose.caixas()), new FrameCombate(recuperacao, corpo));
             }
-            if (sequencia.size() > 1) {
+            if (acao.eAtaque()) {
+                sequencia = TemposRyu.de(acao).aplicar(acao, sequencia);
+            } else if (sequencia.size() > 1) {
                 sequencia = sequencia.stream()
                         .map(frame -> new FrameCombate(
                                 (int) Math.ceil(frame.duracaoFrames() * MULTIPLICADOR_DURACAO),

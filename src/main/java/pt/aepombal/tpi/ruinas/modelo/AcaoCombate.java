@@ -62,6 +62,15 @@ public enum AcaoCombate {
         return pastaAssets;
     }
 
+    /** Sequência fotográfica de 40 poses; os dados de combate mantêm o seu próprio relógio. */
+    public String caminhoAtaque40(int indice) {
+        if (!eAtaque() || indice < 1 || indice > 40) {
+            throw new IllegalArgumentException("Frame de ataque fora de 1–40: " + this + " / " + indice);
+        }
+        return "/assets/textures/fighter/attacks40/" + pastaAssets + "/"
+                + pastaAssets + "_" + String.format("%02d", indice) + ".png";
+    }
+
     /** Caminho do PNG, preservando as pastas das sequências fotográficas antigas. */
     public String caminhoFrame(int indice) {
         if (eSalto() && indice >= 1 && indice <= 12) {

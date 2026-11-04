@@ -37,9 +37,23 @@ Não criar `module-info.java`: o projeto usa o classpath do FXGL 21.1.
 | F3 ou H | Mostrar ou ocultar pushboxes, hurtboxes e hitboxes |
 | Esc | Pausa / menu do FXGL |
 
-No Windows, comandos compatíveis com XInput podem usar o direcional ou analógico esquerdo;
-X/Y/RB são LP/MP/HP, A/B/LB são LK/MK/HK e View/Back é taunt. O suporte usa PowerShell e XInput do Windows,
-sem novas dependências Maven; o ficheiro `comando-xinput.ps1` deve permanecer junto ao `pom.xml`.
+### Comando Xbox (Windows)
+
+Suporte nativo através do XInput do Windows e JNA, sem PowerShell nem programas de
+remapeamento. Basta ligar o comando por USB, Bluetooth ou adaptador Xbox e iniciar
+o combate. Também pode ser ligado ou desligado durante o jogo; o teclado continua disponível.
+
+| Comando | Ação |
+| --- | --- |
+| Direcional / analógico esquerdo | Mover, saltar (cima), agachar (baixo) e defender (recuar) |
+| X / Y / RB | LP / MP / HP (socos) |
+| A / B / LB | LK / MK / HK (pontapés) |
+| View / Back | Provocação |
+
+O analógico tem uma zona morta para evitar movimentos involuntários. O jogo usa um
+comando para o jogador 1, procurando nas quatro posições XInput, e mantém o comando
+selecionado até ser desligado. Pausa e menus continuam a usar o teclado (`Esc`).
+O script antigo `comando-xinput.ps1` já não é necessário para executar o jogo.
 Outros sistemas e comandos que não exponham XInput não são suportados diretamente.
 
 ## Sistema de frames e caixas
@@ -65,7 +79,7 @@ o golpe conserva a trajetória e termina ao aterrar. Os ataques aéreos exigem
 defesa em pé. A animação do salto acompanha a trajetória física na subida,
 no topo e na queda, incluindo no regresso depois de um ataque no ar.
 
-`dados/frames.csv` é a fonte de verdade para o combate. Cada linha descreve **uma caixa de um frame visual**:
+`dados/frames.csv` define as caixas e os danos. Cada linha descreve **uma caixa de um frame visual**:
 
 ```text
 animation;frame;duration;kind;id;x;y;width;height;damage;hitStun;blockStun
@@ -92,11 +106,39 @@ oponente; `CPU -11 ON BLOCK` significa que a CPU fica vulnerável durante onze f
 O valor é calculado a partir do hit-stun/block-stun do CSV menos os frames de
 recuperação que ainda faltam na animação do ataque.
 
-Os valores atuais são uma base de jogo e devem ser afinados com F3 depois de os sprites serem recortados para uma tela comum e com a mesma linha de chão. Alterar o CSV muda tempos, dano e caixas sem recompilar.
+As caixas atuais são uma base de jogo e devem ser afinadas com F3 depois de os sprites serem recortados para uma tela comum e com a mesma linha de chão. Alterar o CSV muda dano e caixas sem recompilar; os tempos de ataque vêm de `TemposRyu.java`.
 
-Os ataques com uma única pose no CSV são divididos pelo carregador em arranque,
-frame ativo e recuperação. As sequências com vários frames são prolongadas pelo
-carregador em cerca de 50%, incluindo as suas hitboxes e recuperação. O tratamento de impacto foi adaptado a partir do
+### Tempos dos ataques — Ryu de Street Fighter 6
+
+`modelo/TemposRyu.java` fixa os tempos segundo a [tabela oficial da Capcom](https://www.streetfighter.com/6/character/ryu/frame),
+consultada em 04/11/2026. O combate avança em passos de **1/60 s**, independentemente
+do FPS de desenho. Não se aplica o antigo multiplicador de 1,5 aos ataques.
+Arranque indica o primeiro frame ativo: um golpe de 4f tem 3f de preparação.
+
+| Normal | Arranque | Ativos | Recuperação |
+| --- | ---: | ---: | ---: |
+| LP / LK | 4 / 5 | 3 / 3 | 7 / 11 |
+| MP / MK | 6 / 9 | 4 / 3 | 11 / 18 |
+| HP / HK | 10 / 12 | 5 / 4 | 18 / 20 |
+| Agachado LP / LK | 4 / 5 | 2 / 2 | 9 / 10 |
+| Agachado MP / MK | 6 / 8 | 4 / 3 | 13 / 19 |
+| Agachado HP / HK | 9 / 9 | 6 / 3 | 22 / 23 |
+| Aéreo LP / LK | 4 / 6 | 10 / 10 | Até aterrar + 3f |
+| Aéreo MP / MK | 8 / 7 | 5 / 6 | Até aterrar + 3f |
+| Aéreo HP / HK | 9 / 10 | 6 / 8 | Até aterrar + 3f |
+
+MP em pé e agachado recuperam mais 2f quando falham. As poses existentes são
+redistribuídas pelas fases; ter 40 fotografias não significa que o golpe dure 40f.
+As vantagens de hit/block dos normais de chão também ajustam o stun, sem o antigo
+mínimo artificial de block-stun. A cadeia universal leve → médio → forte foi retirada;
+mantém-se rapid cancel dos leves compatíveis, sem adicionar especiais.
+
+Limites: as caixas, hitstop, trajetória de salto e sistema de guarda continuam a ser
+os deste protótipo, não uma reprodução integral de SF6. O HK agachado ainda usa hit-stun,
+não o knockdown do original; os stuns aéreos continuam próprios do jogo. Os dois
+anti-airs personalizados usam os tempos do HP agachado, preservando o dano de 600.
+
+O tratamento de impacto foi adaptado a partir do
 [Sakuga Engine](https://github.com/NoisyChain/Sakuga-Engine); licença em `SAKUGA_LICENSE.txt`.
 
 ## Estrutura principal
