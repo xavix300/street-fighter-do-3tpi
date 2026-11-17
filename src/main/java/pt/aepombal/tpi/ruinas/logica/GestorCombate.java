@@ -21,6 +21,7 @@ import pt.aepombal.tpi.ruinas.modelo.RecordesException;
 import pt.aepombal.tpi.ruinas.modelo.RepositorioRecordes;
 import pt.aepombal.tpi.ruinas.modelo.ResultadoImpacto;
 import pt.aepombal.tpi.ruinas.modelo.TipoCaixa;
+import pt.aepombal.tpi.ruinas.modelo.TipoAcerto;
 
 import java.nio.file.Path;
 import java.time.LocalDate;
@@ -250,26 +251,32 @@ public final class GestorCombate {
     }
 
     private void acertarSeSobrepoe(ComponenteLutador atacante, ComponenteLutador alvo) {
-        for (CaixaFrame hitbox : atacante.caixasNoMundo(TipoCaixa.HIT)) {
-            for (CaixaFrame hurtbox : alvo.caixasNoMundo(TipoCaixa.HURT)) {
-                if (hitbox.caixa().interceta(hurtbox.caixa())) {
-                    boolean tentativaBloqueio = alvo.bloqueia(atacante.acao());
-                    ResultadoImpacto impacto = alvo.receberImpacto(hitbox, tentativaBloqueio, 1.0);
-                    atacante.registarAcerto();
-                    // Adaptado do tratamento de impacto de Sakuga Engine: confirmar o
-                    // contacto, congelar ambos e aplicar recuo também ao bloquear.
-                    atacante.aplicarHitstop(5);
-                    alvo.aplicarHitstop(5);
-                    double sentido = alvo.getEntity().getX() >= atacante.getEntity().getX() ? 1 : -1;
-                    alvo.aplicarRecuo(sentido * (impacto.bloqueado() ? 90 : 150), 9);
-                    mostrarFrameAdvantage(atacante, impacto);
-                    if (atacante.lado() == LadoLutador.JOGADOR) {
-                        inc("pontos", impacto.bloqueado() ? 5 : impacto.danoAplicado());
-                    }
-                    if (alvo.vida() == 0) lutadorDerrotado(alvo);
-                    return;
-                }
-            }
+        List<CaixaFrame> zonasVulneraveis = alvo.caixasNoMundo(TipoCaixa.HURT);
+        atacante.caixasNoMundo(TipoCaixa.HIT).stream()
+                .filter(golpe -> zonasVulneraveis.stream()
+                        .anyMatch(zona -> golpe.caixa().interceta(zona.caixa())))
+                .findFirst()
+                .ifPresent(golpe -> resolverContacto(atacante, alvo, golpe));
+    }
+
+    /** Resolve apenas o primeiro contacto válido de cada ataque. */
+    private void resolverContacto(ComponenteLutador atacante, ComponenteLutador alvo,
+                                  CaixaFrame golpe) {
+        boolean bloqueado = alvo.bloqueia(atacante.acao());
+        TipoAcerto tipoAcerto = alvo.tipoAcertoRecebido(bloqueado);
+        atacante.registarAcerto();
+        ResultadoImpacto resultado = alvo.receberImpacto(golpe, bloqueado, tipoAcerto);
+        ReacaoContacto reacao = ReacaoContacto.calcular(resultado.bloqueado(),
+                atacante.getEntity().getX(), alvo.getEntity().getX());
+        List.of(atacante, alvo).forEach(lutador -> lutador.aplicarHitstop(reacao.pausaFrames()));
+        alvo.aplicarRecuo(reacao.velocidadeRecuo(), reacao.recuoFrames());
+
+        mostrarFrameAdvantage(atacante, resultado);
+        if (atacante.lado() == LadoLutador.JOGADOR) {
+            inc("pontos", resultado.bloqueado() ? 5 : resultado.danoAplicado());
+        }
+        if (alvo.vida() == 0) {
+            lutadorDerrotado(alvo);
         }
     }
 
@@ -294,6 +301,9 @@ public final class GestorCombate {
                 ? "GUARD BREAK"
                 : impacto.bloqueado() ? "ON BLOCK" : "ON HIT";
         set("frameData", "%s  %s%d  %s".formatted(origem, sinal, vantagem, resultado));
+        set("tipoAcerto", impacto.bloqueado() || impacto.quebraGuarda()
+                || impacto.tipoAcerto() == TipoAcerto.NORMAL
+                ? "" : origem + "  " + impacto.tipoAcerto().rotulo());
     }
 
     private ComponenteLutador lutadorJogador() {

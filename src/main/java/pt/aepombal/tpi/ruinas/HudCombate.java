@@ -50,7 +50,9 @@ final class HudCombate {
                 texto("TPI FIGHTER  /  OFICINA", 330, 15, 300, 9, "#ACB6C2", TextAlignment.CENTER));
         Text frames = texto("", 365, 115, 230, 9, "#BBC9D5", TextAlignment.CENTER);
         frames.textProperty().bind(getsp("frameData"));
-        hud.getChildren().addAll(frames, EstiloTpi.cantos());
+        Text tipoAcerto = texto("", 230, 134, 500, 12, EstiloTpi.LARANJA, TextAlignment.CENTER);
+        tipoAcerto.textProperty().bind(getsp("tipoAcerto"));
+        hud.getChildren().addAll(frames, tipoAcerto, EstiloTpi.cantos());
         return hud;
     }
 

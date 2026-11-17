@@ -69,6 +69,7 @@ public final class StreetFrameApp extends GameApplication {
         vars.put("acaoOponente", "EM GUARDA");
         vars.put("dificuldade", "EQUILIBRADO");
         vars.put("frameData", "FRAME ADVANTAGE  —");
+        vars.put("tipoAcerto", "");
     }
 
     @Override

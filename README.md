@@ -70,8 +70,8 @@ dos normais do [Ryu em Street Fighter 6](https://www.streetfighter.com/6/ja-jp/c
 | MK | 700 | 500 |
 | HK | 900 | 900 |
 
-São danos base por acerto; o protótipo não aplica os modificadores de counter ou
-de redução de combo do SF6. A barra de guarda mantém a escala 0–100.
+São danos base por acerto; os counters aplicam os bónus descritos abaixo.
+O protótipo ainda não aplica redução de dano por combo. A barra de guarda mantém a escala 0–100.
 
 Nos saltos, LP/LK causam 300, MP 700, MK 500 e HP/HK 800 de dano base,
 segundo a mesma tabela oficial do Ryu. Cada salto permite um ataque aéreo;
@@ -138,8 +138,46 @@ os deste protótipo, não uma reprodução integral de SF6. O HK agachado ainda 
 não o knockdown do original; os stuns aéreos continuam próprios do jogo. Os dois
 anti-airs personalizados usam os tempos do HP agachado, preservando o dano de 600.
 
-O tratamento de impacto foi adaptado a partir do
-[Sakuga Engine](https://github.com/NoisyChain/Sakuga-Engine); licença em `SAKUGA_LICENSE.txt`.
+O tratamento de contacto é implementado em Java no próprio projeto:
+`GestorCombate` resolve o primeiro contacto de cada ataque e `ReacaoContacto`
+define a pausa de 5 frames e o recuo do defensor (90 ao bloquear, 150 ao sofrer
+um golpe, durante 9 frames). O motor gráfico e de jogo usado é o FXGL.
+
+### Animação visual do MP
+
+O MP usa agora 20 poses da spritesheet fornecida pelo utilizador: 5 de preparação,
+4 ativas e 11 de recuperação. A animação normal ocupa 20 frames a 60 passos/s,
+sem alterar o dano, as hitboxes ou os frames extra ao falhar.
+O hitstop continua a congelar ambos os lutadores no contacto.
+Os PNGs e `animacao.properties` estão em
+`src/main/resources/assets/textures/fighter/attacks/mp/`.
+Cada golpe pode definir a sua própria quantidade de poses por fase, sem exigir
+40 imagens. Os golpes ainda não convertidos mantêm as sequências anteriores.
+O original, o script de recorte e a imagem de revisão estão em `output/mp-fluid/`.
+
+### Counter Hit, Punish Counter e Whiff Punish
+
+Não exigem botões especiais: dependem do estado do defensor no momento do contacto.
+As mesmas regras aplicam-se ao jogador e à CPU.
+
+| Situação do defensor | Resultado | Dano | Hit-stun |
+| --- | --- | --- | --- |
+| Livre ou já em hit-stun | Acerto normal | Base | Base |
+| Preparação ou fase ativa de um ataque | COUNTER HIT | Base × 1,2 | Base + 2f |
+| Recuperação de um ataque que acertou ou foi bloqueado | PUNISH COUNTER | Base × 1,2 | Base + 4f |
+| Recuperação de um ataque que não tocou no adversário | WHIFF PUNISH / PUNISH COUNTER | Base × 1,2 | Base + 4f |
+
+O whiff punish é um Punish Counter identificado como punição de um golpe falhado;
+os dois bónus não acumulam. Antes de terminar a fase ativa, um golpe ainda pode
+acertar e não é considerado whiff. Os frames extra de recuperação de MP/cr.MP
+falhados e de aterragem após ataque também impedem defesa e podem ser punidos.
+O HUD mostra o tipo de acerto até ao contacto seguinte e a vantagem usa o stun efetivo.
+Bloqueios e guard break não recebem os bónus de counter.
+
+São regras comuns inspiradas no SF6, não uma reprodução integral: ainda não há
+reações específicas por golpe (crumple, launch ou knockdown de Punish Counter),
+Drive, throws ou scaling de combos. O startup, os frames ativos, a recuperação
+e as animações dos ataques não foram alongados.
 
 ## Estrutura principal
 

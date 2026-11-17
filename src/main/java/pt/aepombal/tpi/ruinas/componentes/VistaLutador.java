@@ -13,11 +13,14 @@ import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.transform.Scale;
 import pt.aepombal.tpi.ruinas.modelo.AcaoCombate;
 import pt.aepombal.tpi.ruinas.modelo.LadoLutador;
+import pt.aepombal.tpi.ruinas.modelo.DefinicaoAnimacao;
+import pt.aepombal.tpi.ruinas.modelo.PlanoVisualAtaque;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 /**
  * Representação vetorial temporária de um lutador.
@@ -28,6 +31,8 @@ public final class VistaLutador extends Group {
     private final Group corpo = new Group();
     private static final Map<AcaoCombate, List<Image>> SPRITES = carregarSprites();
     private static final Map<AcaoCombate, List<Image>> ATAQUES_40 = carregarAtaques40();
+    private record AtaqueVisual(PlanoVisualAtaque plano, List<Image> imagens) { }
+    private static final Map<AcaoCombate, AtaqueVisual> ATAQUES_FLUIDOS = carregarAtaquesFluidos();
     private final ImageView sprite = new ImageView();
     private final Line bracoTras = membro();
     private final Line bracoFrente = membro();
@@ -106,6 +111,21 @@ public final class VistaLutador extends Group {
         boolean usa40 = frameAtaque >= 0 && ATAQUES_40.containsKey(acao);
         List<Image> imagens = usa40 ? ATAQUES_40.get(acao) : SPRITES.get(acao);
         int indice = usa40 ? frameAtaque : frame;
+        mostrarImagens(acao, frame, imagens, indice);
+    }
+
+    /** Seleciona a sequência visual sem alterar os frames lógicos do lutador. */
+    public void mostrarAtaque(DefinicaoAnimacao animacao, int frame, double tempoNoFrame) {
+        AtaqueVisual visual = ATAQUES_FLUIDOS.get(animacao.acao());
+        if (visual == null) {
+            mostrar(animacao.acao(), frame, animacao.indiceAtaque40(frame, tempoNoFrame));
+        } else {
+            mostrarImagens(animacao.acao(), frame, visual.imagens(),
+                    visual.plano().indice(animacao, frame, tempoNoFrame));
+        }
+    }
+
+    private void mostrarImagens(AcaoCombate acao, int frame, List<Image> imagens, int indice) {
         boolean temSprite = imagens != null && !imagens.isEmpty();
         // Os novos frames baixos já estão alinhados na tela comum.
         sprite.setX(-32);
@@ -174,6 +194,38 @@ public final class VistaLutador extends Group {
             if (imagens.size() == 40) sprites.put(acao, List.copyOf(imagens));
         }
         return sprites;
+    }
+
+    private static Map<AcaoCombate, AtaqueVisual> carregarAtaquesFluidos() {
+        Map<AcaoCombate, AtaqueVisual> ataques = new EnumMap<>(AcaoCombate.class);
+        for (AcaoCombate acao : AcaoCombate.values()) {
+            if (!acao.eAtaque()) continue;
+            String pasta = "/assets/textures/fighter/attacks/" + acao.pastaAssets() + "/";
+            try (InputStream ficheiro = VistaLutador.class.getResourceAsStream(pasta + "animacao.properties")) {
+                if (ficheiro == null) continue;
+                Properties dados = new Properties();
+                dados.load(ficheiro);
+                PlanoVisualAtaque plano = new PlanoVisualAtaque(
+                        Integer.parseInt(dados.getProperty("preparacao")),
+                        Integer.parseInt(dados.getProperty("ativos")),
+                        Integer.parseInt(dados.getProperty("recuperacao")));
+                List<Image> imagens = new ArrayList<>();
+                for (int i = 1; i <= plano.quantidade(); i++) {
+                    String nome = acao.pastaAssets() + "_" + String.format("%02d", i) + ".png";
+                    try (InputStream png = VistaLutador.class.getResourceAsStream(pasta + nome)) {
+                        if (png == null) throw new java.io.IOException("Falta pose: " + pasta + nome);
+                        Image imagem = new Image(png);
+                        if (imagem.isError()) throw new java.io.IOException("PNG inválido: " + nome);
+                        imagens.add(imagem);
+                    }
+                }
+                ataques.put(acao, new AtaqueVisual(plano, List.copyOf(imagens)));
+            } catch (java.io.IOException | IllegalArgumentException e) {
+                // Uma sequência incompleta nunca substitui a alternativa que já funciona.
+                System.err.println("Não foi possível carregar animação de " + acao + ": " + e.getMessage());
+            }
+        }
+        return ataques;
     }
 
     private void reporPose() {

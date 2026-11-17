@@ -7,6 +7,8 @@ import pt.aepombal.tpi.ruinas.modelo.Caixa;
 import pt.aepombal.tpi.ruinas.modelo.CaixaFrame;
 import pt.aepombal.tpi.ruinas.modelo.DefinicaoAnimacao;
 import pt.aepombal.tpi.ruinas.modelo.FrameCombate;
+import pt.aepombal.tpi.ruinas.modelo.FaseAtaque;
+import pt.aepombal.tpi.ruinas.modelo.TipoAcerto;
 import pt.aepombal.tpi.ruinas.modelo.LadoLutador;
 import pt.aepombal.tpi.ruinas.modelo.ResultadoImpacto;
 import pt.aepombal.tpi.ruinas.modelo.RegraDefesa;
@@ -57,6 +59,7 @@ public final class ComponenteLutador extends Component {
     private double velocidadeRecuo;
     private double tempoBufferAtaque;
     private int framesRecuperacaoExtra;
+    private boolean recuperacaoExtraSemContacto;
     private double acumuladorCombate;
     private final SaltoLutador salto = new SaltoLutador();
     private int movimento;
@@ -65,6 +68,7 @@ public final class ComponenteLutador extends Component {
     private boolean movimentoRelativoAoOponente;
     private boolean baixoPremido;
     private boolean acertoRegistado;
+    private boolean ataqueAereoTeveContacto;
     private AcaoCombate ataquePendente;
 
     public ComponenteLutador(LadoLutador lado, GestorCombate gestor,
@@ -170,6 +174,7 @@ public final class ComponenteLutador extends Component {
     /** Impede que a mesma animação de ataque cause dano mais do que uma vez. */
     public void registarAcerto() {
         acertoRegistado = true;
+        if (acao.eAtaqueAereo()) ataqueAereoTeveContacto = true;
     }
 
     /** Converte as caixas relativas deste frame para coordenadas do mundo. */
@@ -179,13 +184,25 @@ public final class ComponenteLutador extends Component {
 
     /** Testa se o bloqueio atual defende corretamente o golpe recebido. */
     public boolean bloqueia(AcaoCombate ataque) {
-        return RegraDefesa.bloqueia(acao, ataque, movimentoRelativo < 0,
+        return framesRecuperacaoExtra == 0 && RegraDefesa.bloqueia(acao, ataque, movimentoRelativo < 0,
                 baixoPremido, salto.noChao(), guarda > 0);
+    }
+
+    /** Classifica o estado antes de receber dano, pois o impacto muda a ação para HIT. */
+    public TipoAcerto tipoAcertoRecebido(boolean bloqueado) {
+        if (framesRecuperacaoExtra > 0 && tempoStun == 0) {
+            return TipoAcerto.classificar(FaseAtaque.RECUPERACAO, bloqueado,
+                    recuperacaoExtraSemContacto);
+        }
+        return TipoAcerto.classificar(animacaoAtual().faseAtaque(indiceFrame),
+                bloqueado, !acertoRegistado);
     }
 
     /** Aplica um impacto, usando stun de bloqueio quando a defesa foi correta. */
     public ResultadoImpacto receberImpacto(CaixaFrame hitbox, boolean bloqueado,
-                                            double escalaDano) {
+                                            TipoAcerto tipoAcerto) {
+        framesRecuperacaoExtra = 0;
+        recuperacaoExtraSemContacto = false;
         if (bloqueado) {
             // Guarda continua em 0–100, independentemente da escala da vida/dano.
             double danoNaEscalaDaGuarda = hitbox.dano() * 100.0 / VIDA_MAXIMA;
@@ -197,24 +214,25 @@ public final class ComponenteLutador extends Component {
                 tempoStun = STUN_QUEBRA_GUARDA / 60.0;
                 atrasoRecuperacaoGuarda = 2.0;
                 mudarAcao(AcaoCombate.HIT);
-                return new ResultadoImpacto(false, true, STUN_QUEBRA_GUARDA, 0);
+                return new ResultadoImpacto(false, true, STUN_QUEBRA_GUARDA, 0, TipoAcerto.NORMAL);
             }
 
             int blockStun = hitbox.blockStun();
             tempoStun = blockStun / 60.0;
             mudarAcao(acao == AcaoCombate.LOW_BLOCK ? AcaoCombate.LOW_BLOCK : AcaoCombate.BLOCK);
-            return new ResultadoImpacto(true, false, blockStun, 0);
+            return new ResultadoImpacto(true, false, blockStun, 0, TipoAcerto.NORMAL);
         }
 
-        tempoStun = hitbox.hitStun() / 60.0;
+        int hitStun = tipoAcerto.stun(hitbox.hitStun());
+        tempoStun = hitStun / 60.0;
         atrasoRecuperacaoGuarda = Math.max(atrasoRecuperacaoGuarda, 0.6);
-        int danoEfetivo = Math.max(1, (int) Math.round(hitbox.dano() * escalaDano));
+        int danoEfetivo = tipoAcerto.dano(hitbox.dano());
         int vidaAnterior = vida;
         vida = Math.max(0, vida - danoEfetivo);
         danoEfetivo = vidaAnterior - vida;
         mudarAcao(vida == 0 ? AcaoCombate.KNOCKOUT : AcaoCombate.HIT);
         gestor.atualizarVida(this);
-        return new ResultadoImpacto(false, false, hitbox.hitStun(), danoEfetivo);
+        return new ResultadoImpacto(false, false, hitStun, danoEfetivo, tipoAcerto);
     }
 
     /** Frames que faltam até o atacante recuperar e voltar a poder agir. */
@@ -436,7 +454,10 @@ public final class ComponenteLutador extends Component {
             salto.atualizar(tpf);
             entity.setY(CHAO_Y + salto.altura());
             if (salto.noChao()) {
-                if (salto.ataqueUsado()) framesRecuperacaoExtra = 3;
+                if (salto.ataqueUsado()) {
+                    framesRecuperacaoExtra = 3;
+                    recuperacaoExtraSemContacto = !ataqueAereoTeveContacto;
+                }
                 if (ataquePendente != null && ataquePendente.eAtaqueAereo()) ataquePendente = null;
                 if (acao.eSalto() || acao.eAtaqueAereo()) {
                     mudarAcao(acaoParaMovimento());
@@ -488,6 +509,7 @@ public final class ComponenteLutador extends Component {
                  && acao != AcaoCombate.VICTORY) {
             if (acao.eAtaque() && !acao.eAtaqueAereo() && !acertoRegistado) {
                 framesRecuperacaoExtra = TemposRyu.de(acao).extraFalha();
+                recuperacaoExtraSemContacto = framesRecuperacaoExtra > 0;
             }
             mudarAcao(acaoParaMovimento());
         }
@@ -505,6 +527,7 @@ public final class ComponenteLutador extends Component {
         if (!animacoes.containsKey(novaAcao)) {
             throw new IllegalStateException("Faltam frames para " + novaAcao);
         }
+        if (novaAcao.eAtaqueAereo()) ataqueAereoTeveContacto = false;
         acao = novaAcao;
         indiceFrame = novaAcao.eSalto() ? salto.indiceFrame(animacoes.get(novaAcao).frames().size()) : 0;
         tempoNoFrame = 0;
@@ -515,10 +538,12 @@ public final class ComponenteLutador extends Component {
     }
 
     private void atualizarVista() {
-        int pose = acao.eAtaque()
-                ? animacaoAtual().indiceAtaque40(indiceFrame, tempoNoFrame * 60.0 / ESCALA_TEMPO_ATAQUE)
-                : -1;
-        vista.mostrar(acao, indiceFrame, pose);
+        if (acao.eAtaque()) {
+            vista.mostrarAtaque(animacaoAtual(), indiceFrame,
+                    tempoNoFrame * 60.0 / ESCALA_TEMPO_ATAQUE);
+        } else {
+            vista.mostrar(acao, indiceFrame);
+        }
         vista.inclinarSalto(acao == AcaoCombate.JUMP_SIDE ? -8 * salto.direcao() : 0);
     }
 

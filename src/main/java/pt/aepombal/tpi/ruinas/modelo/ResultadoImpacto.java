@@ -5,5 +5,6 @@ public record ResultadoImpacto(
         boolean bloqueado,
         boolean quebraGuarda,
         int stunFrames,
-        int danoAplicado) {
+        int danoAplicado,
+        TipoAcerto tipoAcerto) {
 }
