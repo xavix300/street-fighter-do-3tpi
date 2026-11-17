@@ -31,6 +31,12 @@ public record TemposRyu(int arranque, int ativos, int recuperacao,
             case AIR_MK -> new TemposRyu(7, 6, 0, 0, 0, 0);
             case AIR_HP -> new TemposRyu(9, 6, 0, 0, 0, 0);
             case AIR_HK -> new TemposRyu(10, 8, 0, 0, 0, 0);
+            case COLLARBONE_BREAKER -> new TemposRyu(20, 4, 19, 3, -3, 0);
+            case SOLAR_PLEXUS -> new TemposRyu(20, 5, 16, 6, 3, 0);
+            case SHORT_UPPERCUT -> new TemposRyu(7, 4, 26, 1, -13, 0);
+            // O intervalo inclui 5f sem hitbox (15–19), construídos por NormaisDirecionaisRyu.
+            case AXE_KICK -> new TemposRyu(10, 14, 21, 0, -4, 0);
+            case WHIRLWIND_KICK -> new TemposRyu(16, 4, 20, 2, -4, 0);
             default -> throw new IllegalArgumentException("Não é ataque: " + acao);
         };
     }

@@ -39,6 +39,11 @@ public enum AcaoCombate {
     AIR_LK("air_lk", false, true, false),
     AIR_MK("air_mk", false, true, false),
     AIR_HK("air_hk", false, true, false),
+    COLLARBONE_BREAKER("collarbone_breaker", false, true, false),
+    SOLAR_PLEXUS("solar_plexus", false, true, false),
+    SHORT_UPPERCUT("short_uppercut", false, true, false),
+    AXE_KICK("axe_kick", false, true, false),
+    WHIRLWIND_KICK("whirlwind_kick", false, true, false),
     HIT("hit", false, false, false),
     KNOCKOUT("knockout", false, false, false),
     TAUNT("taunt", false, false, false),
@@ -73,6 +78,7 @@ public enum AcaoCombate {
 
     /** Caminho do PNG, preservando as pastas das sequências fotográficas antigas. */
     public String caminhoFrame(int indice) {
+        if (eDirecional()) return baseVisual().caminhoFrame(indice);
         if (eSalto() && indice >= 1 && indice <= 12) {
             int foto = new int[]{5, 6, 7, 8, 9, 9, 9, 9, 10, 10, 11, 12}[indice - 1];
             return "/assets/textures/fighter/sequences/jump_clean/jump_" + String.format("%03d", foto) + ".png";
@@ -105,17 +111,33 @@ public enum AcaoCombate {
 
     public boolean eSalto() { return this == JUMP || this == JUMP_SIDE; }
     public boolean eAtaqueAereo() { return name().startsWith("AIR_"); }
-    public boolean exigeBloqueioAlto() { return eAtaqueAereo(); }
+    public boolean exigeBloqueioAlto() { return eAtaqueAereo() || this == COLLARBONE_BREAKER; }
+
+    public boolean eDirecional() {
+        return this == COLLARBONE_BREAKER || this == SOLAR_PLEXUS || this == SHORT_UPPERCUT
+                || this == AXE_KICK || this == WHIRLWIND_KICK;
+    }
+
+    /** Reutiliza as fotografias existentes, não os tempos nem o dano do ataque original. */
+    public AcaoCombate baseVisual() {
+        return switch (this) {
+            case COLLARBONE_BREAKER -> MP;
+            case SOLAR_PLEXUS -> HP;
+            case SHORT_UPPERCUT -> ANTI_AIR_MP;
+            case AXE_KICK, WHIRLWIND_KICK -> HK;
+            default -> this;
+        };
+    }
 
     /** No ar não se escolhem variantes de chão, agachadas ou anti-air. */
     public AcaoCombate aereo() {
         return switch (this) {
             case LP, CROUCH_LP, AIR_LP -> AIR_LP;
-            case MP, CROUCH_MP, ANTI_AIR_MP, ANTI_AIR_CROUCH_MP, AIR_MP -> AIR_MP;
-            case HP, CROUCH_HP, AIR_HP -> AIR_HP;
+            case MP, CROUCH_MP, ANTI_AIR_MP, ANTI_AIR_CROUCH_MP, AIR_MP, COLLARBONE_BREAKER -> AIR_MP;
+            case HP, CROUCH_HP, AIR_HP, SOLAR_PLEXUS, SHORT_UPPERCUT -> AIR_HP;
             case LK, CROUCH_LK, AIR_LK -> AIR_LK;
             case MK, CROUCH_MK, AIR_MK -> AIR_MK;
-            case HK, CROUCH_HK, AIR_HK -> AIR_HK;
+            case HK, CROUCH_HK, AIR_HK, AXE_KICK, WHIRLWIND_KICK -> AIR_HK;
             default -> this;
         };
     }
@@ -129,8 +151,10 @@ public enum AcaoCombate {
     public int nivelForca() {
         return switch (this) {
             case LP, LK, CROUCH_LP, CROUCH_LK, AIR_LP, AIR_LK -> 1;
-            case MP, MK, CROUCH_MP, CROUCH_MK, ANTI_AIR_MP, ANTI_AIR_CROUCH_MP, AIR_MP, AIR_MK -> 2;
-            case HP, HK, CROUCH_HP, CROUCH_HK, AIR_HP, AIR_HK -> 3;
+            case MP, MK, CROUCH_MP, CROUCH_MK, ANTI_AIR_MP, ANTI_AIR_CROUCH_MP, AIR_MP, AIR_MK,
+                    COLLARBONE_BREAKER -> 2;
+            case HP, HK, CROUCH_HP, CROUCH_HK, AIR_HP, AIR_HK,
+                    SOLAR_PLEXUS, SHORT_UPPERCUT, AXE_KICK, WHIRLWIND_KICK -> 3;
             default -> 0;
         };
     }
@@ -148,12 +172,30 @@ public enum AcaoCombate {
         };
     }
 
-    /** Trás é relativo ao adversário; apenas trás + MP escolhe o anti-air. */
+    /** Compatibilidade com os chamadores que só indicam trás. */
     public AcaoCombate selecionarAtaque(boolean baixo, boolean tras) {
-        if (this == MP && tras) {
-            return baixo ? ANTI_AIR_CROUCH_MP : ANTI_AIR_MP;
+        return selecionarAtaque(baixo, tras ? -1 : 0);
+    }
+
+    /** Direção relativa ao adversário: -1 trás, 0 neutro, +1 frente. Baixo tem prioridade. */
+    public AcaoCombate selecionarAtaque(boolean baixo, int direcaoRelativa) {
+        if (baixo) return agachado();
+        if (direcaoRelativa > 0) {
+            return switch (this) {
+                case MP -> COLLARBONE_BREAKER;
+                case HP -> SOLAR_PLEXUS;
+                case HK -> WHIRLWIND_KICK;
+                default -> this;
+            };
         }
-        return baixo ? agachado() : this;
+        if (direcaoRelativa < 0) {
+            return switch (this) {
+                case HP -> SHORT_UPPERCUT;
+                case HK -> AXE_KICK;
+                default -> this;
+            };
+        }
+        return this;
     }
 
     /** Converte o código guardado no ficheiro de dados para a ação correspondente. */

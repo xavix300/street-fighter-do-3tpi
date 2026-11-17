@@ -116,9 +116,13 @@ public final class VistaLutador extends Group {
 
     /** Seleciona a sequência visual sem alterar os frames lógicos do lutador. */
     public void mostrarAtaque(DefinicaoAnimacao animacao, int frame, double tempoNoFrame) {
-        AtaqueVisual visual = ATAQUES_FLUIDOS.get(animacao.acao());
+        AcaoCombate base = animacao.acao().baseVisual();
+        AtaqueVisual visual = ATAQUES_FLUIDOS.get(base);
         if (visual == null) {
-            mostrar(animacao.acao(), frame, animacao.indiceAtaque40(frame, tempoNoFrame));
+            int pose = animacao.indiceAtaque40(frame, tempoNoFrame);
+            int frameFoto = animacao.acao().eDirecional()
+                    ? pose * SPRITES.getOrDefault(base, List.of()).size() / 40 : frame;
+            mostrar(base, frameFoto, pose);
         } else {
             mostrarImagens(animacao.acao(), frame, visual.imagens(),
                     visual.plano().indice(animacao, frame, tempoNoFrame));

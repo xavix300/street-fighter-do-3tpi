@@ -22,12 +22,14 @@ import pt.aepombal.tpi.ruinas.modelo.RepositorioRecordes;
 import pt.aepombal.tpi.ruinas.modelo.ResultadoImpacto;
 import pt.aepombal.tpi.ruinas.modelo.TipoCaixa;
 import pt.aepombal.tpi.ruinas.modelo.TipoAcerto;
+import pt.aepombal.tpi.ruinas.modelo.RelogioCombate;
 
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
 
 import static com.almasb.fxgl.dsl.FXGL.getGameController;
 import static com.almasb.fxgl.dsl.FXGL.addUINode;
@@ -47,6 +49,44 @@ public final class GestorCombate {
     private final Group camadaDepuracao = new Group();
     private boolean rondaTerminada;
     private boolean mostrarCaixas;
+    private final RelogioCombate relogio = new RelogioCombate();
+
+    /** Primeiro avança ambos, depois captura os contactos antes de aplicar qualquer reação. */
+    public void atualizar(double segundos) {
+        relogio.atualizar(segundos, () -> {
+            lutadores.values().forEach(l -> l.atualizarPasso(RelogioCombate.PASSO));
+            List<Contacto> contactos = new ArrayList<>();
+            if (!rondaTerminada) {
+                for (var atacante : lutadores.values()) {
+                    var alvo = oponenteDe(atacante);
+                    if (alvo == null || !atacante.passoAtivo()
+                            || !atacante.acao().eAtaque() || alvo.vida() == 0) continue;
+                    var golpe = encontrarContacto(atacante, alvo);
+                    if (golpe != null) {
+                        boolean bloqueado = alvo.bloqueia(atacante.acao());
+                        contactos.add(new Contacto(atacante, alvo, golpe, bloqueado,
+                                alvo.tipoAcertoRecebido(bloqueado), atacante.framesRecuperacaoRestantes()));
+                    }
+                }
+                // Registar antes de receber impacto: um trade pode interromper os dois golpes.
+                contactos.forEach(c -> c.atacante().registarAcerto(c.golpe()));
+                contactos.forEach(this::resolverContacto);
+                var jogador = lutadores.get(LadoLutador.JOGADOR);
+                if (jogador != null) processarEmpurrao(jogador);
+                if (lutadores.size() == 2 && lutadores.values().stream().allMatch(l -> l.vida() == 0)) {
+                    terminarEmpate();
+                } else {
+                    lutadores.values().stream().filter(l -> l.vida() == 0).findFirst()
+                            .ifPresent(this::lutadorDerrotado);
+                }
+            }
+            lutadores.values().forEach(l -> l.terminarPasso(RelogioCombate.PASSO));
+            atualizarDepuracao();
+        });
+    }
+
+    private record Contacto(ComponenteLutador atacante, ComponenteLutador alvo,
+                            CaixaFrame golpe, boolean bloqueado, TipoAcerto tipo, int recuperacao) { }
 
     public GestorCombate(Map<AcaoCombate, DefinicaoAnimacao> animacoes, Path ficheiroRecordes,
                          ProgressoCombate progresso) {
@@ -126,18 +166,6 @@ public final class GestorCombate {
         return Math.abs(origem.getEntity().getX() - lutadorJogador().getEntity().getX());
     }
 
-    /** Aplica os dados de hitbox do frame atual se ainda não existiu contacto. */
-    public void processarFrame(ComponenteLutador atacante) {
-        if (rondaTerminada || !atacante.acao().eAtaque() || atacante.acertoRegistado()) {
-            return;
-        }
-        ComponenteLutador alvo = lutadores.get(atacante.lado().adversario());
-        if (alvo == null || alvo.vida() == 0) {
-            return;
-        }
-        acertarSeSobrepoe(atacante, alvo);
-    }
-
     /** Separa os corpos quando as pushboxes se sobrepõem. */
     public void processarEmpurrao(ComponenteLutador origem) {
         if (origem.lado() != LadoLutador.JOGADOR || rondaTerminada) {
@@ -195,6 +223,11 @@ public final class GestorCombate {
             case CROUCH_HK -> "PONTAPÉ FORTE AGACHADO";
             case ANTI_AIR_MP -> "ANTI-AIR EM PÉ";
             case ANTI_AIR_CROUCH_MP -> "ANTI-AIR AGACHADO";
+            case COLLARBONE_BREAKER -> "COLLARBONE BREAKER";
+            case SOLAR_PLEXUS -> "SOLAR PLEXUS STRIKE";
+            case SHORT_UPPERCUT -> "SHORT UPPERCUT";
+            case AXE_KICK -> "AXE KICK";
+            case WHIRLWIND_KICK -> "WHIRLWIND KICK";
             case HIT -> "ATINGIDO";
             case KNOCKOUT -> "K.O.";
             case TAUNT -> "PROVOCAÇÃO";
@@ -220,6 +253,14 @@ public final class GestorCombate {
                 .mapToInt(frame -> frame.duracaoFrames()).sum() / 60.0;
         PauseTransition espera = new PauseTransition(Duration.seconds(duracao + 0.5));
         espera.setOnFinished(evento -> mostrarFim(mensagem));
+        espera.play();
+    }
+
+    private void terminarEmpate() {
+        rondaTerminada = true;
+        PauseTransition espera = new PauseTransition(Duration.seconds(1));
+        espera.setOnFinished(evento -> showMessage("DOUBLE K.O. — EMPATE",
+                () -> getGameController().startNewGame()));
         espera.play();
     }
 
@@ -250,33 +291,28 @@ public final class GestorCombate {
         entidade.setY(340);
     }
 
-    private void acertarSeSobrepoe(ComponenteLutador atacante, ComponenteLutador alvo) {
+    private CaixaFrame encontrarContacto(ComponenteLutador atacante, ComponenteLutador alvo) {
         List<CaixaFrame> zonasVulneraveis = alvo.caixasNoMundo(TipoCaixa.HURT);
-        atacante.caixasNoMundo(TipoCaixa.HIT).stream()
+        return atacante.caixasNoMundo(TipoCaixa.HIT).stream()
+                .filter(atacante::podeAcertar)
                 .filter(golpe -> zonasVulneraveis.stream()
                         .anyMatch(zona -> golpe.caixa().interceta(zona.caixa())))
-                .findFirst()
-                .ifPresent(golpe -> resolverContacto(atacante, alvo, golpe));
+                .findFirst().orElse(null);
     }
 
     /** Resolve apenas o primeiro contacto válido de cada ataque. */
-    private void resolverContacto(ComponenteLutador atacante, ComponenteLutador alvo,
-                                  CaixaFrame golpe) {
-        boolean bloqueado = alvo.bloqueia(atacante.acao());
-        TipoAcerto tipoAcerto = alvo.tipoAcertoRecebido(bloqueado);
-        atacante.registarAcerto();
-        ResultadoImpacto resultado = alvo.receberImpacto(golpe, bloqueado, tipoAcerto);
+    private void resolverContacto(Contacto contacto) {
+        var atacante = contacto.atacante();
+        var alvo = contacto.alvo();
+        ResultadoImpacto resultado = alvo.receberImpacto(contacto.golpe(), contacto.bloqueado(), contacto.tipo());
         ReacaoContacto reacao = ReacaoContacto.calcular(resultado.bloqueado(),
                 atacante.getEntity().getX(), alvo.getEntity().getX());
         List.of(atacante, alvo).forEach(lutador -> lutador.aplicarHitstop(reacao.pausaFrames()));
         alvo.aplicarRecuo(reacao.velocidadeRecuo(), reacao.recuoFrames());
 
-        mostrarFrameAdvantage(atacante, resultado);
+        mostrarFrameAdvantage(atacante, resultado, contacto.recuperacao());
         if (atacante.lado() == LadoLutador.JOGADOR) {
             inc("pontos", resultado.bloqueado() ? 5 : resultado.danoAplicado());
-        }
-        if (alvo.vida() == 0) {
-            lutadorDerrotado(alvo);
         }
     }
 
@@ -293,8 +329,8 @@ public final class GestorCombate {
         oponente.empurrar(-2 * sentido);
     }
 
-    private void mostrarFrameAdvantage(ComponenteLutador atacante, ResultadoImpacto impacto) {
-        int vantagem = impacto.stunFrames() - atacante.framesRecuperacaoRestantes();
+    private void mostrarFrameAdvantage(ComponenteLutador atacante, ResultadoImpacto impacto, int recuperacao) {
+        int vantagem = impacto.stunFrames() - recuperacao;
         String sinal = vantagem >= 0 ? "+" : "";
         String origem = atacante.lado() == LadoLutador.JOGADOR ? "P1" : "CPU";
         String resultado = impacto.quebraGuarda()

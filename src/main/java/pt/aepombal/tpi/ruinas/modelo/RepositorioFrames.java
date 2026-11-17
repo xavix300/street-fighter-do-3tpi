@@ -83,6 +83,7 @@ public final class RepositorioFrames {
             }
             resultado.put(acao, new DefinicaoAnimacao(acao, sequencia));
         });
+        NormaisDirecionaisRyu.acrescentar(resultado);
         return Map.copyOf(resultado);
     }
 

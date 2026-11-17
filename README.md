@@ -1,6 +1,10 @@
 # Street Frame Fighter
 
-Protótipo de um jogo de luta 2D em Java/FXGL, desenvolvido como proposta de Percurso C para a UFCD 0816. É inspirado em jogos de luta por frames, mas usa personagens, fotografias e dados próprios.
+Jogo de luta 2D em Java/FXGL, desenvolvido como proposta de Percurso C para a UFCD 0816.
+O alvo mecânico do lutador é **Ryu de Street Fighter 6, sem especiais nem supers**,
+mantendo a personagem e as fotografias próprias. O objetivo é reproduzir o feeling
+de movimento e combate, não apenas a inspiração visual. A implementação ainda não
+é uma reprodução integral: ver [perfil, fontes e diferenças conhecidas](PERFIL_RYU.md).
 
 ## Executar
 
@@ -29,13 +33,22 @@ Não criar `module-info.java`: o projeto usa o classpath do FXGL 21.1.
 | J / K / L | LK / MK / HK |
 | S + U / I / O | LP / MP / HP agachados |
 | S + J / K / L | LK / MK / HK agachados |
-| Trás + I | Anti-air em pé (MP, 600 de dano) |
-| S + trás + I | Anti-air agachado (MP, 600 de dano) |
+| Frente + I | Collarbone Breaker (600) |
+| Frente + O | Solar Plexus Strike (800) |
+| Trás + O | Short Uppercut (800) |
+| Trás + L | Axe Kick (400 + 400) |
+| Frente + L | Whirlwind Kick (800) |
+| Trás + I / S + trás + I | MP normal / MP agachado, sem anti-air personalizado |
 | W, depois U / I / O | LP / MP / HP no ar |
 | W, depois J / K / L | LK / MK / HK no ar |
 | A + W / D + W, depois ataque | Soco ou pontapé durante o salto lateral |
 | F3 ou H | Mostrar ou ocultar pushboxes, hurtboxes e hitboxes |
 | Esc | Pausa / menu do FXGL |
+
+Frente/trás são relativos ao adversário; A/D continuam a indicar esquerda/direita.
+Baixo com qualquer diagonal escolhe o normal agachado. No ar, os seis botões escolhem
+os normais aéreos, não os direcionais de chão. Manter W/cima permite repetir o salto
+quando o lutador volta a poder agir; cima+baixo é neutralizado.
 
 ### Comando Xbox (Windows)
 
@@ -79,7 +92,9 @@ o golpe conserva a trajetória e termina ao aterrar. Os ataques aéreos exigem
 defesa em pé. A animação do salto acompanha a trajetória física na subida,
 no topo e na queda, incluindo no regresso depois de um ataque no ar.
 
-`dados/frames.csv` define as caixas e os danos. Cada linha descreve **uma caixa de um frame visual**:
+`dados/frames.csv` define as caixas e os danos dos movimentos originais.
+`NormaisDirecionaisRyu` acrescenta os cinco direcionais, com caixas adaptadas dos
+movimentos existentes e dados próprios. Cada linha do CSV descreve **uma caixa de um frame visual**:
 
 ```text
 animation;frame;duration;kind;id;x;y;width;height;damage;hitStun;blockStun
@@ -133,15 +148,21 @@ As vantagens de hit/block dos normais de chão também ajustam o stun, sem o ant
 mínimo artificial de block-stun. A cadeia universal leve → médio → forte foi retirada;
 mantém-se rapid cancel dos leves compatíveis, sem adicionar especiais.
 
-Limites: as caixas, hitstop, trajetória de salto e sistema de guarda continuam a ser
-os deste protótipo, não uma reprodução integral de SF6. O HK agachado ainda usa hit-stun,
-não o knockdown do original; os stuns aéreos continuam próprios do jogo. Os dois
-anti-airs personalizados usam os tempos do HP agachado, preservando o dano de 600.
+O movimento distingue avanço (235 px/s) e recuo (160 px/s), conservando a proporção
+4,7:3,2 da referência e uma conversão espacial explícita para esta arena.
+O salto tem 4f de preparação, 39f no ar em neutro ou 38f na diagonal. Altura e
+geometria são adaptações às fotografias, não medidas exatas do SF6.
+Os dois anti-airs antigos permanecem como dados de compatibilidade, mas já não têm
+comandos do jogador; o anti-air direcional passa a ser trás+HP.
 
 O tratamento de contacto é implementado em Java no próprio projeto:
-`GestorCombate` resolve o primeiro contacto de cada ataque e `ReacaoContacto`
+`GestorCombate` usa um relógio comum de 60 Hz para ambos os lutadores e captura os
+contactos antes das reações, permitindo trades. Cada golpe só acerta uma vez;
+Axe Kick tem dois grupos de impacto separados. `ReacaoContacto`
 define a pausa de 5 frames e o recuo do defensor (90 ao bloquear, 150 ao sofrer
 um golpe, durante 9 frames). O motor gráfico e de jogo usado é o FXGL.
+
+Ver `PERFIL_RYU.md` para os direcionais, limites de fidelidade e testes executáveis.
 
 ### Animação visual do MP
 

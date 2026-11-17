@@ -10,28 +10,37 @@ public final class SaltoTeste {
             salto.iniciar(direcao);
             verificar(!salto.noChao() && salto.direcao() == direcao, "Direção inicial");
             verificar(salto.acao() == (direcao == 0 ? AcaoCombate.JUMP : AcaoCombate.JUMP_SIDE), "Tipo de salto");
-            salto.atualizar(0.4);
-            verificar(Math.abs(salto.altura() + 144) < 0.001, "Topo a 0,4 segundos");
+            verificar(salto.aPreparar() && !salto.consumirAtaque(), "Prejump sem ataque aéreo");
+            salto.atualizar(4.0 / 60.0);
+            verificar(salto.altura() == 0 && !salto.aPreparar(), "Quatro frames de prejump");
+            int duracao = direcao == 0 ? 39 : 38;
+            salto.atualizar(duracao / 120.0);
+            verificar(Math.abs(salto.altura() + 144) < 0.001, "Topo a meio do tempo aéreo");
             verificar(salto.indiceFrame(12) == 6, "Pose do topo");
             verificar(salto.consumirAtaque() && !salto.consumirAtaque(), "Só um ataque por salto");
-            salto.atualizar(0.4);
+            salto.atualizar(duracao / 120.0);
             verificar(salto.noChao() && salto.altura() == 0 && salto.direcao() == 0, "Aterragem");
             verificar(!salto.consumirAtaque(), "Ataque aéreo proibido no chão");
             salto.iniciar(direcao);
+            salto.atualizar(5.0 / 60.0);
             verificar(salto.consumirAtaque(), "Novo salto permite novo ataque");
         }
         for (int fps : new int[]{30, 60, 144}) {
             var salto = new SaltoLutador();
             salto.iniciar(1);
             int anterior = 0;
+            double distancia = 0;
             for (int i = 0; i < fps; i++) {
                 salto.atualizar(1.0 / fps);
+                distancia += salto.deslocamentoHorizontal();
                 if (salto.noChao()) break;
                 int frame = salto.indiceFrame(12);
                 verificar(frame >= anterior && frame < 12, "Fases devem avançar com a trajetória");
                 anterior = frame;
             }
             verificar(salto.noChao(), "Aterragem independente do FPS");
+            verificar(Math.abs(distancia - MovimentoRyu.DISTANCIA_SALTO) < 1e-6,
+                    "Distância independente do FPS, incluindo o último passo");
         }
         var animacoes = new RepositorioFrames().carregar(Path.of("dados", "frames.csv"));
         for (var base : new AcaoCombate[]{AcaoCombate.LP, AcaoCombate.MP, AcaoCombate.HP,

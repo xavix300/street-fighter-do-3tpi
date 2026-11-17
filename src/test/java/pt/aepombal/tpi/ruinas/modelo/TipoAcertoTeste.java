@@ -60,8 +60,8 @@ public final class TipoAcertoTeste {
         var duplo = new DefinicaoAnimacao(AcaoCombate.MP, List.of(vazio, golpe, vazio, golpe, vazio));
         verificar(duplo.faseAtaque(2) == FaseAtaque.ATIVA, "Intervalo de ataque multi-hit");
         verificar(duplo.faseAtaque(4) == FaseAtaque.RECUPERACAO, "Fim do ataque multi-hit");
-        verificar(ataques == 20, "Cobertura dos vinte ataques");
-        System.out.println("Counters, dano, stun e fases dos 20 ataques: OK");
+        verificar(ataques == 25, "Cobertura dos vinte ataques antigos e cinco direcionais");
+        System.out.println("Counters, dano, stun e fases dos 25 ataques: OK");
     }
 
     private static void verificar(boolean condicao, String mensagem) {

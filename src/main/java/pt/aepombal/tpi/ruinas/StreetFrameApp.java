@@ -28,6 +28,7 @@ public final class StreetFrameApp extends GameApplication {
     private boolean esquerdaPremida;
     private boolean direitaPremida;
     private boolean baixoPremido;
+    private boolean cimaPremida;
     private int botoesComando;
     private final ComandoWindows comando = new ComandoWindows();
 
@@ -76,7 +77,10 @@ public final class StreetFrameApp extends GameApplication {
     protected void initInput() {
         ligarMovimento("Esquerda", KeyCode.A, false);
         ligarMovimento("Direita", KeyCode.D, true);
-        ligarAcao("Saltar", KeyCode.W, () -> gestor.saltarJogador(direcaoSalto()));
+        getInput().addAction(new UserAction("Saltar") {
+            @Override protected void onActionBegin() { cimaPremida = true; atualizarSaltoPremido(); }
+            @Override protected void onActionEnd() { cimaPremida = false; }
+        }, KeyCode.W);
         ligarAcao("Provocação", KeyCode.T, () -> gestor.provocarJogador());
         getInput().addAction(new UserAction("Baixo") {
             @Override protected void onActionBegin() { baixoPremido = true; atualizarBaixo(); }
@@ -88,6 +92,7 @@ public final class StreetFrameApp extends GameApplication {
                 case A -> { esquerdaPremida = false; atualizarMovimentoPremido(); }
                 case D -> { direitaPremida = false; atualizarMovimentoPremido(); }
                 case S -> { baixoPremido = false; atualizarBaixo(); }
+                case W -> cimaPremida = false;
                 default -> { }
             }
         });
@@ -101,7 +106,7 @@ public final class StreetFrameApp extends GameApplication {
         gestor = criarGestor();
         getGameWorld().addEntityFactory(new FabricaEntidades(gestor));
         gestor.criarMundo();
-        esquerdaPremida = direitaPremida = baixoPremido = false;
+        esquerdaPremida = direitaPremida = baixoPremido = cimaPremida = false;
         comando.iniciar();
         botoesComando = 0;
     }
@@ -110,12 +115,14 @@ public final class StreetFrameApp extends GameApplication {
     protected void onUpdate(double tpf) {
         if (gestor == null) return;
         int atual = comando.botoes();
-        if (atual == botoesComando) return;
         int novos = atual & ~botoesComando;
+        boolean mudou = atual != botoesComando;
         botoesComando = atual;
-        atualizarMovimentoPremido();
-        atualizarBaixo();
-        if ((novos & 1) != 0) gestor.saltarJogador(direcaoSalto());
+        if (mudou) {
+            atualizarMovimentoPremido();
+            atualizarBaixo();
+        }
+        atualizarSaltoPremido();
         if ((novos & 0x4000) != 0) gestor.atacarJogador(AcaoCombate.LP); // X
         if ((novos & 0x8000) != 0) gestor.atacarJogador(AcaoCombate.MP); // Y
         if ((novos & 0x0200) != 0) gestor.atacarJogador(AcaoCombate.HP); // RB
@@ -123,10 +130,19 @@ public final class StreetFrameApp extends GameApplication {
         if ((novos & 0x2000) != 0) gestor.atacarJogador(AcaoCombate.MK); // B
         if ((novos & 0x0100) != 0) gestor.atacarJogador(AcaoCombate.HK); // LB
         if ((novos & 0x0020) != 0) gestor.provocarJogador(); // View/Back
+        gestor.atualizar(tpf);
     }
 
     private void atualizarBaixo() {
         if (gestor != null) gestor.baixoJogador(baixoPremido || (botoesComando & 2) != 0);
+    }
+
+    private void atualizarSaltoPremido() {
+        if (gestor == null) return;
+        boolean cima = cimaPremida || (botoesComando & 1) != 0;
+        boolean baixo = baixoPremido || (botoesComando & 2) != 0;
+        // Cima+baixo neutraliza; manter cima repete o salto assim que a recuperação acaba.
+        if (cima && !baixo) gestor.saltarJogador(direcaoSalto());
     }
 
     @Override
