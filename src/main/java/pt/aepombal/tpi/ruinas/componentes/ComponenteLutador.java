@@ -16,6 +16,7 @@ import pt.aepombal.tpi.ruinas.modelo.SaltoLutador;
 import pt.aepombal.tpi.ruinas.modelo.TipoCaixa;
 import pt.aepombal.tpi.ruinas.modelo.TemposRyu;
 import pt.aepombal.tpi.ruinas.modelo.MovimentoRyu;
+import pt.aepombal.tpi.ruinas.modelo.Personagem;
 
 import java.util.List;
 import java.util.Map;
@@ -31,11 +32,12 @@ import static com.almasb.fxgl.dsl.FXGL.getAppWidth;
  */
 public final class ComponenteLutador extends Component {
 
-    public static final double ESCALA = 1.5;
+    // Altura visual de cerca de 250 px, proporcional à oficina de 960 × 560.
+    public static final double ESCALA = 2.5;
     public static final int VIDA_MAXIMA = 10_000;
     public static final double LARGURA = 64 * ESCALA;
     public static final double ALTURA = 108 * ESCALA;
-    private static final double CHAO_Y = 502 - ALTURA;
+    public static final double CHAO_Y = 502 - ALTURA;
     private static final int ESCALA_TEMPO_ATAQUE = 1;
     private static final double GUARDA_MAXIMA = 100;
     private static final double RECUPERACAO_GUARDA_POR_SEGUNDO = 18;
@@ -47,12 +49,14 @@ public final class ComponenteLutador extends Component {
     private final GestorCombate gestor;
     private final Map<AcaoCombate, DefinicaoAnimacao> animacoes;
     private final VistaLutador vista;
+
     private int vida = VIDA_MAXIMA;
     private double guarda = GUARDA_MAXIMA;
     private int guardaPublicada = (int) GUARDA_MAXIMA;
     private AcaoCombate acao = AcaoCombate.IDLE;
     private int indiceFrame;
     private double tempoNoFrame;
+    private double tempoVisualFrames;
     private double tempoStun;
     private double tempoHitstop;
     private double atrasoRecuperacaoGuarda;
@@ -80,6 +84,14 @@ public final class ComponenteLutador extends Component {
         this.animacoes = animacoes;
         this.vista = vista;
         this.orientacaoAtual = lado.orientacao();
+    }
+
+    public Personagem personagem() { return vista.personagem(); }
+
+    /** Troca só o aspeto: preserva vida, ação, stun, posição e relógio da ronda. */
+    public void trocarPersonagem(Personagem personagem) {
+        vista.definirPersonagem(personagem);
+        atualizarVista();
     }
 
     /** Começa a andar na direção do adversário. */
@@ -486,6 +498,7 @@ public final class ComponenteLutador extends Component {
     }
 
     private void atualizarFrame(double tpf) {
+        tempoVisualFrames += tpf * 60;
         if (acao.eSalto()) {
             indiceFrame = salto.indiceFrame(animacaoAtual().frames().size());
             atualizarVista();
@@ -542,6 +555,7 @@ public final class ComponenteLutador extends Component {
         acao = novaAcao;
         indiceFrame = novaAcao.eSalto() ? salto.indiceFrame(animacoes.get(novaAcao).frames().size()) : 0;
         tempoNoFrame = 0;
+        tempoVisualFrames = 0;
         acertoRegistado = false;
         golpesRegistados.clear();
         String rotulo = gestor.rotuloAcao(novaAcao);
@@ -554,7 +568,7 @@ public final class ComponenteLutador extends Component {
             vista.mostrarAtaque(animacaoAtual(), indiceFrame,
                     tempoNoFrame * 60.0 / ESCALA_TEMPO_ATAQUE);
         } else {
-            vista.mostrar(acao, indiceFrame);
+            vista.mostrarMovimento(animacaoAtual(), indiceFrame, tempoVisualFrames);
         }
         vista.inclinarSalto(acao == AcaoCombate.JUMP_SIDE ? -8 * salto.direcao() : 0);
     }

@@ -60,9 +60,11 @@ final class HudCombate {
         double x = cpu ? 554 : 32;
         String cor = cpu ? EstiloTpi.LARANJA : EstiloTpi.AZUL;
         TextAlignment alinhamento = cpu ? TextAlignment.RIGHT : TextAlignment.LEFT;
-        Text nome = texto(cpu ? "CPU" : "JOGADOR 01", x, 36, 374, 19, "#F4F2EC", alinhamento);
+        boolean versus = ConfiguracaoPartida.ATUAL.versus();
+        Text nome = texto(cpu ? (versus ? "JOGADOR 02" : "CPU") : "JOGADOR 01", x, 36, 374, 19, "#F4F2EC", alinhamento);
         Text detalhe = texto("", x, 19, 374, 9, "#A8B4C1", alinhamento);
-        if (cpu) detalhe.textProperty().bind(Bindings.concat("OPONENTE  /  ", getsp("dificuldade")));
+        if (versus) detalhe.setText(ConfiguracaoPartida.ATUAL.descricao(cpu ? 1 : 0).toUpperCase());
+        else if (cpu) detalhe.textProperty().bind(Bindings.concat("OPONENTE  /  ", getsp("dificuldade")));
         else detalhe.textProperty().bind(getip("pontos").asString("JOGADOR  /  SCORE %06d"));
         IntegerProperty vida = getip(cpu ? "vidaOponente" : "vidaJogador");
         Group barra = barraVida(vida, x, cpu, cor);
@@ -126,7 +128,11 @@ final class HudCombate {
         ajuda.setMouseTransparent(true);
         ajuda.setTranslateY(528);
         Rectangle fundo = new Rectangle(960, 32, Color.web("#071B30", .86));
-        Text controlos = texto("A / D  MOVER     W  SALTAR     S + TRÁS  DEFENDER     U I O  SOCOS     J K L  PONTAPÉS     ESC  PAUSA",
+        String textoAjuda = ConfiguracaoPartida.ATUAL.versus()
+                ? "VERSUS LOCAL     P1: " + ConfiguracaoPartida.ATUAL.descricao(0)
+                    + "     P2: " + ConfiguracaoPartida.ATUAL.descricao(1) + "     ESC / START / OPTIONS: PAUSA"
+                : "A / D  MOVER     W  SALTAR     S + TRÁS  DEFENDER     U I O  SOCOS     J K L  PONTAPÉS     ESC / START / OPTIONS  PAUSA";
+        Text controlos = texto(textoAjuda,
                 24, 20, 912, 10, "#B5C0CC", TextAlignment.CENTER);
         Line linha = new Line(0, 0, 960, 0);
         linha.setStroke(new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE,

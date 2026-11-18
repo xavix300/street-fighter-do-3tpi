@@ -15,6 +15,7 @@ import pt.aepombal.tpi.ruinas.modelo.AcaoCombate;
 import pt.aepombal.tpi.ruinas.modelo.LadoLutador;
 import pt.aepombal.tpi.ruinas.modelo.DefinicaoAnimacao;
 import pt.aepombal.tpi.ruinas.modelo.PlanoVisualAtaque;
+import pt.aepombal.tpi.ruinas.modelo.Personagem;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -30,9 +31,11 @@ public final class VistaLutador extends Group {
 
     private final Group corpo = new Group();
     private static final Map<AcaoCombate, List<Image>> SPRITES = carregarSprites();
+    private static final Map<Personagem, List<Image>> IDLES = carregarIdles();
     private static final Map<AcaoCombate, List<Image>> ATAQUES_40 = carregarAtaques40();
     private record AtaqueVisual(PlanoVisualAtaque plano, List<Image> imagens) { }
     private static final Map<AcaoCombate, AtaqueVisual> ATAQUES_FLUIDOS = carregarAtaquesFluidos();
+    private static final Map<AcaoCombate, AtaqueVisual> PACK_SEGUNDO = carregarPackSegundo();
     private final ImageView sprite = new ImageView();
     private final Line bracoTras = membro();
     private final Line bracoFrente = membro();
@@ -41,8 +44,14 @@ public final class VistaLutador extends Group {
     private final Circle maoTras = new Circle(5);
     private final Circle maoFrente = new Circle(5);
     private int orientacao;
+    private Personagem personagem;
 
     public VistaLutador(LadoLutador lado) {
+        this(lado, Personagem.LUTADOR_01);
+    }
+
+    public VistaLutador(LadoLutador lado, Personagem personagem) {
+        this.personagem = java.util.Objects.requireNonNull(personagem);
         getTransforms().add(new Scale(ComponenteLutador.ESCALA, ComponenteLutador.ESCALA, 0, 0));
         orientacao = lado.orientacao();
         Color principal = lado == LadoLutador.JOGADOR
@@ -90,6 +99,13 @@ public final class VistaLutador extends Group {
         mostrar(AcaoCombate.IDLE, 0);
     }
 
+    public Personagem personagem() { return personagem; }
+
+    public void definirPersonagem(Personagem nova) {
+        personagem = java.util.Objects.requireNonNull(nova);
+        mostrar(AcaoCombate.IDLE, 0);
+    }
+
     /** Espelha imediatamente a silhueta para ficar virada para o adversário. */
     public void olharPara(int novaOrientacao) {
         orientacao = novaOrientacao < 0 ? -1 : 1;
@@ -108,6 +124,12 @@ public final class VistaLutador extends Group {
     }
 
     public void mostrar(AcaoCombate acao, int frame, int frameAtaque) {
+        if (personagem.animacoesProvisorias()) {
+            // Nunca mostrar o corpo do primeiro lutador numa ação sem imagens próprias.
+            var visual = visualSegundo(acao);
+            mostrarImagens(acao, frame, visual.imagens(), frame);
+            return;
+        }
         boolean usa40 = frameAtaque >= 0 && ATAQUES_40.containsKey(acao);
         List<Image> imagens = usa40 ? ATAQUES_40.get(acao) : SPRITES.get(acao);
         int indice = usa40 ? frameAtaque : frame;
@@ -116,6 +138,12 @@ public final class VistaLutador extends Group {
 
     /** Seleciona a sequência visual sem alterar os frames lógicos do lutador. */
     public void mostrarAtaque(DefinicaoAnimacao animacao, int frame, double tempoNoFrame) {
+        if (personagem.animacoesProvisorias()) {
+            var visual = visualSegundo(animacao.acao());
+            int indice = visual.plano() == null ? 3 : visual.plano().indice(animacao, frame, tempoNoFrame);
+            mostrarImagens(animacao.acao(), frame, visual.imagens(), indice);
+            return;
+        }
         AcaoCombate base = animacao.acao().baseVisual();
         AtaqueVisual visual = ATAQUES_FLUIDOS.get(base);
         if (visual == null) {
@@ -159,6 +187,89 @@ public final class VistaLutador extends Group {
             }
             default -> { }
         }
+    }
+
+    private static Map<Personagem, List<Image>> carregarIdles() {
+        Map<Personagem, List<Image>> idles = new EnumMap<>(Personagem.class);
+        for (Personagem personagem : Personagem.values()) {
+            List<Image> imagens = new ArrayList<>();
+            for (int i = 1; i <= 12; i++) {
+                String caminho = personagem.caminhoIdle(i);
+                try (InputStream stream = VistaLutador.class.getResourceAsStream(caminho)) {
+                    if (stream == null) throw new IllegalStateException("Falta idle: " + caminho);
+                    Image imagem = new Image(stream);
+                    if (imagem.isError()) throw new IllegalStateException("PNG inválido: " + caminho);
+                    imagens.add(imagem);
+                } catch (java.io.IOException e) {
+                    throw new IllegalStateException("Não foi possível ler " + caminho, e);
+                }
+            }
+            idles.put(personagem, List.copyOf(imagens));
+        }
+        return Map.copyOf(idles);
+    }
+
+    /** Anima a apresentação sem mudar o CSV, a física ou os tempos de combate. */
+    public void mostrarMovimento(DefinicaoAnimacao animacao, int frame, double tempoVisualFrames) {
+        if (!personagem.animacoesProvisorias()) {
+            mostrar(animacao.acao(), frame);
+            return;
+        }
+        var acao = animacao.acao();
+        var imagens = visualSegundo(acao).imagens();
+        int indice;
+        if (acao.eSalto()) {
+            indice = (int) Math.round(frame * (imagens.size() - 1.0)
+                    / Math.max(1, animacao.frames().size() - 1));
+        } else {
+            int duracao = animacao.frames().stream().mapToInt(f -> f.duracaoFrames()).sum();
+            double progresso = tempoVisualFrames / duracao;
+            boolean ciclo = acao == AcaoCombate.IDLE || acao == AcaoCombate.STANCE
+                    || acao == AcaoCombate.WALK_FORWARD || acao == AcaoCombate.WALK_BACKWARD;
+            progresso = ciclo ? progresso - Math.floor(progresso) : Math.min(progresso, 1);
+            indice = Math.min(imagens.size() - 1, (int) (progresso * imagens.size()));
+        }
+        mostrarImagens(acao, frame, imagens, indice);
+    }
+
+    private static AtaqueVisual visualSegundo(AcaoCombate acao) {
+        AtaqueVisual visual = PACK_SEGUNDO.get(acao);
+        if (visual != null) return visual;
+        if (acao == AcaoCombate.MP) {
+            return new AtaqueVisual(null, PACK_SEGUNDO.get(AcaoCombate.GUARD).imagens());
+        }
+        return new AtaqueVisual(null, IDLES.get(Personagem.LUTADOR_02));
+    }
+
+    private static Map<AcaoCombate, AtaqueVisual> carregarPackSegundo() {
+        Map<AcaoCombate, AtaqueVisual> resultado = new EnumMap<>(AcaoCombate.class);
+        for (AcaoCombate acao : AcaoCombate.values()) {
+            String pasta = "/assets/textures/fighters/fighter_02/" + acao.pastaAssets() + "/";
+            try (InputStream stream = VistaLutador.class.getResourceAsStream(pasta + "animacao.properties")) {
+                if (stream == null) continue;
+                Properties dados = new Properties();
+                dados.load(stream);
+                int quantidade = Integer.parseInt(dados.getProperty("poses"));
+                List<Image> imagens = new ArrayList<>();
+                for (int i = 1; i <= quantidade; i++) {
+                    String caminho = pasta + acao.pastaAssets() + "_%03d.png".formatted(i);
+                    try (InputStream png = VistaLutador.class.getResourceAsStream(caminho)) {
+                        if (png == null) throw new IllegalStateException("Falta PNG: " + caminho);
+                        Image imagem = new Image(png);
+                        if (imagem.isError()) throw new IllegalStateException("PNG inválido: " + caminho);
+                        imagens.add(imagem);
+                    }
+                }
+                PlanoVisualAtaque plano = acao.eAtaque() ? new PlanoVisualAtaque(
+                        Integer.parseInt(dados.getProperty("preparacao")),
+                        Integer.parseInt(dados.getProperty("ativos")),
+                        Integer.parseInt(dados.getProperty("recuperacao"))) : null;
+                resultado.put(acao, new AtaqueVisual(plano, List.copyOf(imagens)));
+            } catch (java.io.IOException e) {
+                throw new IllegalStateException("Não foi possível carregar " + pasta, e);
+            }
+        }
+        return Map.copyOf(resultado);
     }
 
     private static Map<AcaoCombate, List<Image>> carregarSprites() {

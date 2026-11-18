@@ -1,0 +1,232 @@
+{
+  "source": "fighter_partial_pack.zip",
+  "quality": "LOW_RESOLUTION_PREVIEW_PLACEHOLDERS",
+  "missing": [
+    "mp",
+    "stance"
+  ],
+  "animations": {
+    "guard": {
+      "poses": 11,
+      "reference_height": 62,
+      "scale": 1.5873015873015872,
+      "source": "preview_only"
+    },
+    "walk_forward": {
+      "poses": 14,
+      "reference_height": 62,
+      "scale": 1.6129032258064515,
+      "source": "preview_only"
+    },
+    "walk_backward": {
+      "poses": 14,
+      "reference_height": 61,
+      "scale": 1.6129032258064515,
+      "source": "preview_only"
+    },
+    "crouch": {
+      "poses": 11,
+      "reference_height": 57.0,
+      "scale": 1.7543859649122806,
+      "source": "preview_only"
+    },
+    "block": {
+      "poses": 11,
+      "reference_height": 63,
+      "scale": 1.5384615384615385,
+      "source": "preview_only"
+    },
+    "low_block": {
+      "poses": 11,
+      "reference_height": 57.0,
+      "scale": 1.7543859649122806,
+      "source": "preview_only"
+    },
+    "jump": {
+      "poses": 12,
+      "reference_height": 57.0,
+      "scale": 1.7543859649122806,
+      "source": "preview_only"
+    },
+    "jump_side": {
+      "poses": 11,
+      "reference_height": 57.0,
+      "scale": 1.7543859649122806,
+      "source": "preview_only"
+    },
+    "lp": {
+      "poses": 12,
+      "reference_height": 58,
+      "scale": 1.7241379310344827,
+      "source": "preview_only"
+    },
+    "hp": {
+      "poses": 12,
+      "reference_height": 56,
+      "scale": 1.7857142857142858,
+      "source": "preview_only"
+    },
+    "lk": {
+      "poses": 12,
+      "reference_height": 55,
+      "scale": 1.8181818181818181,
+      "source": "preview_only"
+    },
+    "mk": {
+      "poses": 12,
+      "reference_height": 50,
+      "scale": 1.9607843137254901,
+      "source": "preview_only"
+    },
+    "hk": {
+      "poses": 12,
+      "reference_height": 50,
+      "scale": 1.9230769230769231,
+      "source": "preview_only"
+    },
+    "crouch_lp": {
+      "poses": 12,
+      "reference_height": 57.0,
+      "scale": 1.7543859649122806,
+      "source": "preview_only"
+    },
+    "crouch_mp": {
+      "poses": 12,
+      "reference_height": 57.0,
+      "scale": 1.7543859649122806,
+      "source": "preview_only"
+    },
+    "crouch_hp": {
+      "poses": 12,
+      "reference_height": 57.0,
+      "scale": 1.7543859649122806,
+      "source": "preview_only"
+    },
+    "crouch_lk": {
+      "poses": 12,
+      "reference_height": 57.0,
+      "scale": 1.7543859649122806,
+      "source": "preview_only"
+    },
+    "crouch_mk": {
+      "poses": 12,
+      "reference_height": 57.0,
+      "scale": 1.7543859649122806,
+      "source": "preview_only"
+    },
+    "crouch_hk": {
+      "poses": 12,
+      "reference_height": 57.0,
+      "scale": 1.7543859649122806,
+      "source": "preview_only"
+    },
+    "air_lp": {
+      "poses": 12,
+      "reference_height": 57.0,
+      "scale": 1.7543859649122806,
+      "source": "preview_only"
+    },
+    "air_mp": {
+      "poses": 12,
+      "reference_height": 57.0,
+      "scale": 1.7543859649122806,
+      "source": "preview_only"
+    },
+    "air_hp": {
+      "poses": 12,
+      "reference_height": 57.0,
+      "scale": 1.7543859649122806,
+      "source": "preview_only"
+    },
+    "air_lk": {
+      "poses": 12,
+      "reference_height": 57.0,
+      "scale": 1.7543859649122806,
+      "source": "preview_only"
+    },
+    "air_mk": {
+      "poses": 11,
+      "reference_height": 57.0,
+      "scale": 1.7543859649122806,
+      "source": "preview_only"
+    },
+    "air_hk": {
+      "poses": 12,
+      "reference_height": 57.0,
+      "scale": 1.7543859649122806,
+      "source": "preview_only"
+    },
+    "collarbone_breaker": {
+      "poses": 12,
+      "reference_height": 47,
+      "scale": 2.0833333333333335,
+      "source": "preview_only"
+    },
+    "solar_plexus": {
+      "poses": 13,
+      "reference_height": 49,
+      "scale": 2.0408163265306123,
+      "source": "preview_only"
+    },
+    "short_uppercut": {
+      "poses": 12,
+      "reference_height": 47,
+      "scale": 1.7543859649122806,
+      "source": "preview_only"
+    },
+    "axe_kick": {
+      "poses": 12,
+      "reference_height": 44,
+      "scale": 2.0833333333333335,
+      "source": "preview_only"
+    },
+    "whirlwind_kick": {
+      "poses": 12,
+      "reference_height": 48,
+      "scale": 2.0408163265306123,
+      "source": "preview_only"
+    },
+    "hit": {
+      "poses": 11,
+      "reference_height": 51,
+      "scale": 1.9230769230769231,
+      "source": "preview_only"
+    },
+    "knockout": {
+      "poses": 10,
+      "reference_height": 48,
+      "scale": 1.9607843137254901,
+      "source": "preview_only"
+    },
+    "taunt": {
+      "poses": 12,
+      "reference_height": 53,
+      "scale": 1.639344262295082,
+      "source": "preview_only"
+    },
+    "victory": {
+      "poses": 13,
+      "reference_height": 51,
+      "scale": 1.6129032258064515,
+      "source": "preview_only"
+    },
+    "celebration": {
+      "poses": 13,
+      "reference_height": 45,
+      "scale": 1.9230769230769231,
+      "source": "preview_only"
+    },
+    "anti_air_mp": {
+      "poses": 12,
+      "reference_height": 51,
+      "scale": 1.9607843137254901,
+      "source": "preview_only"
+    },
+    "anti_air_crouch_mp": {
+      "poses": 12,
+      "reference_height": 46,
+      "scale": 2.1739130434782608,
+      "source": "preview_only"
+    }
+  }
+}

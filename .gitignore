@@ -4,3 +4,6 @@ target/
 dados/recordes.csv
 logs/
 system/
+.opencode/opencode.json
+__pycache__/
+*.py[cod]

@@ -17,7 +17,7 @@
     </properties>
 
     <dependencies>
-        <!-- Acesso direto às DLLs XInput do Windows, sem processos externos. -->
+        <!-- Acesso direto ao XInput / WinMM do Windows, sem processos externos. -->
         <dependency>
             <groupId>net.java.dev.jna</groupId>
             <artifactId>jna</artifactId>

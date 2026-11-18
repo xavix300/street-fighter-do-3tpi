@@ -26,7 +26,7 @@ public class RyuIntegracaoTeste extends GameApplication {
         for (int i = 0; i < 2; i++) {
             var lado = LadoLutador.values()[i];
             cs[i] = new ComponenteLutador(lado, gestor, dados, new VistaLutador(lado));
-            FXGL.entityBuilder().at(i == 0 ? x1 : x2, 340).with(cs[i]).build();
+            FXGL.entityBuilder().at(i == 0 ? x1 : x2, ComponenteLutador.CHAO_Y).with(cs[i]).build();
             gestor.registar(lado, cs[i]);
         }
         return new Par(gestor, cs[0], cs[1]);
@@ -55,10 +55,12 @@ public class RyuIntegracaoTeste extends GameApplication {
             check(p.p1.vida() == 9640 && p.p2.vida() == 9640, "Same-frame counter trade");
             p = par(300,750);
             p.p1.saltar(1); tick(p,3);
-            check(p.p1.getEntity().getY() == 340, "Prejump stays grounded");
-            tick(p,2); check(p.p1.getEntity().getY() < 340, "Airborne after prejump");
+            check(p.p1.getEntity().getY() + ComponenteLutador.ALTURA == 502,
+                    "Prejump keeps feet on the arena floor at the new scale");
+            tick(p,2); check(p.p1.getEntity().getY() < ComponenteLutador.CHAO_Y, "Airborne after prejump");
             tick(p,37);
-            check(Math.abs(p.p1.getEntity().getY() - 340) < 1e-6, "Landing frame");
+            check(Math.abs(p.p1.getEntity().getY() + ComponenteLutador.ALTURA - 502) < 1e-6,
+                    "Landing keeps feet on the arena floor at the new scale");
             check(Math.abs(p.p1.getEntity().getX() - (300 + MovimentoRyu.DISTANCIA_SALTO)) < 1e-6, "Jump distance");
             System.out.println("REAL FXGL PASS: walk, LP frame 4, single-hit, simultaneous trade, prejump and landing");
             System.exit(0);

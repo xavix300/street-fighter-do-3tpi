@@ -80,6 +80,13 @@ final class MenuPrincipal extends FXGLMenu {
         brilhoTitulo.atualizar(tpf);
     }
 
+    void comando(int botoes) {
+        if (PainelMenu.comandoAtual(getContentRoot(), botoes)) return;
+        if ((botoes & 1) != 0) selecionar((selecionado + 4) % 5);
+        else if ((botoes & 2) != 0) selecionar((selecionado + 1) % 5);
+        if ((botoes & 0x1000) != 0) ativar(selecionado);
+    }
+
     private void selecionar(int indice) {
         selecionado = indice;
         for (int i = 0; i < botoes.length; i++) {
@@ -92,9 +99,8 @@ final class MenuPrincipal extends FXGLMenu {
 
     private void ativar(int indice) {
         switch (indice) {
-            case 0 -> fireNewGame();
-            case 1 -> PainelMenu.mensagem(getContentRoot(), "PERSONAGENS",
-                    "O jogo usa atualmente os dois lutadores disponíveis.\n\nA seleção de personagens ainda não está disponível.");
+            case 0 -> PainelMenu.escolherPartida(getContentRoot(), this::fireNewGame);
+            case 1 -> PainelMenu.personagens(getContentRoot());
             case 2 -> PainelMenu.mensagem(getContentRoot(), "ARENAS / OFICINA",
                     "O combate decorre na oficina do campus.\n\nA seleção de outras arenas ainda não está disponível.");
             case 3 -> PainelMenu.definicoes(getContentRoot());

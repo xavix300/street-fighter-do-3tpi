@@ -1,0 +1,155 @@
+{
+  "source": "fighter_lote_01_10_imagens.zip",
+  "animations": {
+    "idle": {
+      "poses": 12,
+      "grid": [
+        4,
+        3
+      ],
+      "source_size": [
+        1448,
+        1086
+      ],
+      "source_sha256": "fd5aa4ea0516c1b2a68ce304645a9a37c800452c91dcb40210f98df1fe5c9112",
+      "scale": 1.13314447592068,
+      "root_ratio": 0.49171270718232046,
+      "background_cleanup": "alpha"
+    },
+    "guard": {
+      "poses": 12,
+      "grid": [
+        4,
+        3
+      ],
+      "source_size": [
+        1448,
+        1086
+      ],
+      "source_sha256": "08a52ed0d1acdcf594e5648b2b860fc44277b114f7b579bada66765b1272ac78",
+      "scale": 1.1204481792717087,
+      "root_ratio": 0.4930939226519337,
+      "background_cleanup": "alpha"
+    },
+    "walk_forward": {
+      "poses": 16,
+      "grid": [
+        4,
+        4
+      ],
+      "source_size": [
+        1254,
+        1254
+      ],
+      "source_sha256": "bbf2ffb3d66e06309dcb9f94b21f35b8614f2981b59e17da81b99741b9200533",
+      "scale": 1.3245033112582782,
+      "root_ratio": 0.5,
+      "background_cleanup": "alpha_threshold"
+    },
+    "walk_backward": {
+      "poses": 16,
+      "grid": [
+        4,
+        4
+      ],
+      "source_size": [
+        1254,
+        1254
+      ],
+      "source_sha256": "ed1a807bdeb601ef50bfe43199a558c8c75d4548292475fc3df4fbabbfa14a9e",
+      "scale": 1.3157894736842106,
+      "root_ratio": 0.4697452229299363,
+      "background_cleanup": "alpha"
+    },
+    "crouch": {
+      "poses": 12,
+      "grid": [
+        4,
+        3
+      ],
+      "source_size": [
+        1448,
+        1086
+      ],
+      "source_sha256": "3585bd898e369c0f99b9c03b32ae647ab50ee54472b750c7be8cc84089863bd3",
+      "scale": 1.1363636363636365,
+      "root_ratio": 0.5248618784530387,
+      "background_cleanup": "alpha"
+    },
+    "block": {
+      "poses": 12,
+      "grid": [
+        4,
+        3
+      ],
+      "source_size": [
+        1448,
+        1086
+      ],
+      "source_sha256": "39722f7b0010028c44e6b034458331b5b867a5ff71dec1aa496cad7cba229064",
+      "scale": 1.1661807580174928,
+      "root_ratio": 0.5276243093922652,
+      "background_cleanup": "alpha"
+    },
+    "low_block": {
+      "poses": 12,
+      "grid": [
+        4,
+        3
+      ],
+      "source_size": [
+        1448,
+        1086
+      ],
+      "source_sha256": "f290ecdc46a4edda7fafe2a6f0aa20b03475754ae56c045a70d59b616cb0e5e6",
+      "scale": 1.1267605633802817,
+      "root_ratio": 0.5013812154696132,
+      "background_cleanup": "alpha"
+    },
+    "jump": {
+      "poses": 24,
+      "grid": [
+        6,
+        4
+      ],
+      "source_size": [
+        1536,
+        1024
+      ],
+      "source_sha256": "b583853867f45e6f6db764f65de3df6f03bda108df614c28d0e1d6e00b24dfa6",
+      "scale": 1.6194331983805668,
+      "root_ratio": 0.57421875,
+      "background_cleanup": "alpha"
+    },
+    "jump_side": {
+      "poses": 24,
+      "grid": [
+        6,
+        4
+      ],
+      "source_size": [
+        1536,
+        1024
+      ],
+      "source_sha256": "c22ab4a8fff1d622ccbde902ed375e94d2a9d110099bd804780829ee61eaae1a",
+      "scale": 1.646090534979424,
+      "root_ratio": 0.537109375,
+      "background_cleanup": "GrabCut"
+    },
+    "lp": {
+      "poses": 20,
+      "grid": [
+        5,
+        4
+      ],
+      "source_size": [
+        1402,
+        1122
+      ],
+      "source_sha256": "5907fa4d7bd9140b1d758bd5ec88c5f8753948400a2c0afa9c02f74a983893d1",
+      "scale": 1.486988847583643,
+      "root_ratio": 0.5339285714285714,
+      "background_cleanup": "alpha"
+    }
+  }
+}

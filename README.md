@@ -18,6 +18,25 @@ de movimento e combate, não apenas a inspiração visual. A implementação ain
    ```
 
 Não criar `module-info.java`: o projeto usa o classpath do FXGL 21.1.
+O jogo arranca em **ecrã inteiro**. Pode mudar para janela em Opções → Vídeo;
+`Esc` abre a pausa sem sair do ecrã inteiro.
+
+## Personagens
+
+No menu **Personagens**, escolhe primeiro **P1** ou **P2/CPU** e confirma o
+lutador com clique, Enter ou A/Cruz. A escolha aplica-se ao próximo combate.
+Durante uma partida, **Esc / Start / Options → Personagens** permite trocar
+imediatamente sem reiniciar a vida, a posição ou o estado da ronda.
+
+O **Lutador 02** usa 10 folhas independentes do lote 01 para idle, guarda,
+caminhadas, agachar, bloqueios, saltos e LP. O lote 02 acrescenta folhas próprias
+para HP, LK, MK, crouch LP e crouch LK. Os restantes 23 movimentos importados
+ainda usam previews de detalhe reduzido. MP usa a guarda própria como recurso;
+stance usa o idle. As regras de combate mantêm-se e nunca usa imagens do Lutador 01.
+Ver `output/fighter-02-lote-01/README.md`, `output/fighter-02-lote-02/README.md`
+e `output/fighter-02-pack/README.md`
+para as fontes, limitações e ordem de importação.
+As escolhas são mantidas durante a execução do jogo, não guardadas em disco.
 
 ## Controlos
 
@@ -63,11 +82,70 @@ o combate. Também pode ser ligado ou desligado durante o jogo; o teclado contin
 | A / B / LB | LK / MK / HK (pontapés) |
 | View / Back | Provocação |
 
-O analógico tem uma zona morta para evitar movimentos involuntários. O jogo usa um
-comando para o jogador 1, procurando nas quatro posições XInput, e mantém o comando
-selecionado até ser desligado. Pausa e menus continuam a usar o teclado (`Esc`).
+O analógico tem uma zona morta para evitar movimentos involuntários. O jogo procura
+nas quatro posições XInput e mantém cada comando selecionado até ser desligado.
+São suportados até dois comandos, com atribuições independentes.
 O script antigo `comando-xinput.ps1` já não é necessário para executar o jogo.
-Outros sistemas e comandos que não exponham XInput não são suportados diretamente.
+Outros sistemas não são suportados diretamente.
+
+### Comando PS5 DualSense (Windows)
+
+Ligar por USB ou emparelhar por Bluetooth nas definições do Windows. O jogo lê o
+DualSense através do WinMM/JNA, sem precisar de DS4Windows. O comando tem de estar
+visível ao Windows como dispositivo de jogo (ver `joy.cpl`); ferramentas que ocultam
+o dispositivo físico podem impedir a deteção. A deteção usa os identificadores Sony
+do DualSense/DualSense Edge ou o nome «DualSense» / «Wireless Controller».
+
+| Comando PS5 | Ação |
+| --- | --- |
+| Direcional / analógico esquerdo | Mover, saltar, agachar e defender |
+| Quadrado / Triângulo / R1 | LP / MP / HP (socos) |
+| Cruz / Círculo / L1 | LK / MK / HK (pontapés) |
+| Create | Provocação |
+
+Pode ligar/desligar o comando durante o combate (deteção até cerca de um segundo).
+O analógico tem zona morta. Na deteção inicial, os dispositivos XInput têm prioridade;
+os restantes lugares podem usar DualSense. Um comando já atribuído não troca de lugar
+só porque se liga outro. Desativar a emulação XInput no Steam Input/DS4Windows para
+evitar que um DualSense apareça também como um segundo comando virtual.
+Vibração, touchpad e gatilhos
+adaptativos não estão implementados.
+
+### Menus com comando
+
+| Comando Xbox / PS5 | Ação |
+| --- | --- |
+| Direcional / analógico esquerdo | Navegar (manter a direção repete) |
+| A / Cruz | Confirmar, ativar botões e opções |
+| B / Círculo | Voltar / fechar painel |
+| Start / Options | Abrir pausa no combate; retomar no menu de pausa |
+| Esquerda / direita sobre o volume | Ajustar áudio |
+
+Qualquer um dos dois comandos pode navegar no menu principal, definições,
+confirmações e pausa. Teclado: setas, `Enter` / espaço e `Esc`.
+
+### Dois jogadores — versus local
+
+Em **Jogar**, mudar **MODO** para **2 JOGADORES** e selecionar as fontes de
+**P1** e **P2** antes de iniciar. São permitidas todas as combinações de fontes
+distintas: dois comandos (Xbox, PS5 ou um de cada), teclado + comando, ou dois
+esquemas de teclado. O menu impede iniciar com um comando escolhido mas desligado.
+
+| Fonte | Movimento | Socos LP / MP / HP | Pontapés LK / MK / HK | Provocação |
+| --- | --- | --- | --- | --- |
+| Teclado 1 | W A S D | U I O | J K L | T |
+| Teclado 2 | Setas | Num 7 / 8 / 9 | Num 4 / 5 / 6 | Num 0 |
+
+Ativar **Num Lock** para o teclado 2. Pode usar um teclado partilhado ou dois
+teclados físicos: o Windows junta as teclas de ambos, pelo que cada jogador tem
+de usar o respetivo esquema. Alguns teclados limitam quantas teclas simultâneas
+conseguem detetar (ghosting); comandos evitam essa limitação.
+
+No versus, ambos controlam um lutador completo, sem IA. O HUD identifica P1/P2 e
+os controlos escolhidos. Os resultados locais não alteram a dificuldade nem os
+recordes do modo contra CPU. Depois do K.O., confirmar inicia uma nova partida
+com os mesmos controlos; a pausa permite regressar ao menu.
+O modo **1 JOGADOR** mantém teclado 1 + comando 1 contra a CPU.
 
 ## Sistema de frames e caixas
 

@@ -52,7 +52,8 @@ public final class FabricaEntidades implements EntityFactory {
         LadoLutador lado = data.get("lado");
         Rectangle limiteColisao = new Rectangle(ComponenteLutador.LARGURA,
                 ComponenteLutador.ALTURA, Color.TRANSPARENT);
-        VistaLutador vista = new VistaLutador(lado);
+        VistaLutador vista = new VistaLutador(lado,
+                ConfiguracaoPartida.ATUAL.personagem(lado == LadoLutador.JOGADOR ? 0 : 1));
 
         ComponenteLutador lutador = new ComponenteLutador(lado, gestor, gestor.animacoes(), vista);
         var construtor = FXGL.entityBuilder(data)
@@ -62,7 +63,7 @@ public final class FabricaEntidades implements EntityFactory {
                 .collidable()
                 .with(lutador);
 
-        if (lado == LadoLutador.OPONENTE) {
+        if (lado == LadoLutador.OPONENTE && !gestor.doisJogadores()) {
             construtor.with(gestor.dificuldade().criarComportamento(gestor));
         }
 

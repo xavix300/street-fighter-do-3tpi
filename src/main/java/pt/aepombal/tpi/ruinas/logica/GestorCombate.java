@@ -23,6 +23,7 @@ import pt.aepombal.tpi.ruinas.modelo.ResultadoImpacto;
 import pt.aepombal.tpi.ruinas.modelo.TipoCaixa;
 import pt.aepombal.tpi.ruinas.modelo.TipoAcerto;
 import pt.aepombal.tpi.ruinas.modelo.RelogioCombate;
+import pt.aepombal.tpi.ruinas.modelo.Personagem;
 
 import java.nio.file.Path;
 import java.time.LocalDate;
@@ -46,6 +47,7 @@ public final class GestorCombate {
     private final Map<LadoLutador, ComponenteLutador> lutadores = new EnumMap<>(LadoLutador.class);
     private final RepositorioRecordes recordes;
     private final ProgressoCombate progresso;
+    private final boolean doisJogadores;
     private final Group camadaDepuracao = new Group();
     private boolean rondaTerminada;
     private boolean mostrarCaixas;
@@ -90,14 +92,27 @@ public final class GestorCombate {
 
     public GestorCombate(Map<AcaoCombate, DefinicaoAnimacao> animacoes, Path ficheiroRecordes,
                          ProgressoCombate progresso) {
+        this(animacoes, ficheiroRecordes, progresso, false);
+    }
+
+    public GestorCombate(Map<AcaoCombate, DefinicaoAnimacao> animacoes, Path ficheiroRecordes,
+                         ProgressoCombate progresso, boolean doisJogadores) {
         this.animacoes = animacoes;
         this.recordes = new RepositorioRecordes(ficheiroRecordes);
         this.progresso = progresso;
+        this.doisJogadores = doisJogadores;
+    }
+
+    public boolean doisJogadores() { return doisJogadores; }
+
+    public void trocarPersonagem(LadoLutador lado, Personagem personagem) {
+        var lutador = lutadores.get(lado);
+        if (lutador != null) lutador.trocarPersonagem(personagem);
     }
 
     /** Cria o chão e os dois lutadores da primeira ronda. */
     public void criarMundo() {
-        set("dificuldade", progresso.dificuldade().nome().toUpperCase());
+        set("dificuldade", doisJogadores ? "VERSUS LOCAL" : progresso.dificuldade().nome().toUpperCase());
         spawn("arena", 0, 0);
         criarLutador(LadoLutador.JOGADOR, 150);
         criarLutador(LadoLutador.OPONENTE, 680);
@@ -144,6 +159,38 @@ public final class GestorCombate {
 
     public void provocarJogador() {
         lutadorJogador().provocar();
+    }
+
+    private ComponenteLutador humano(LadoLutador lado) {
+        return rondaTerminada || (lado == LadoLutador.OPONENTE && !doisJogadores)
+                ? null : lutadores.get(lado);
+    }
+
+    public void moverHumano(LadoLutador lado, int direcao) {
+        var lutador = humano(lado);
+        if (lutador == null) return;
+        if (direcao == 0) lutador.parar();
+        else lutador.moverHorizontal(direcao);
+    }
+
+    public void baixoHumano(LadoLutador lado, boolean premido) {
+        var lutador = humano(lado);
+        if (lutador != null) lutador.definirBaixo(premido);
+    }
+
+    public void saltarHumano(LadoLutador lado, int direcao) {
+        var lutador = humano(lado);
+        if (lutador != null) lutador.saltar(direcao);
+    }
+
+    public void atacarHumano(LadoLutador lado, AcaoCombate ataque) {
+        var lutador = humano(lado);
+        if (lutador != null) lutador.atacar(ataque);
+    }
+
+    public void provocarHumano(LadoLutador lado) {
+        var lutador = humano(lado);
+        if (lutador != null) lutador.provocar();
     }
 
     /** Ativa ou oculta o modo de depuração das hitboxes, hurtboxes e pushboxes. */
@@ -242,11 +289,12 @@ public final class GestorCombate {
         }
         rondaTerminada = true;
         LadoLutador vencedor = derrotado.lado().adversario();
-        if (vencedor == LadoLutador.JOGADOR) {
+        if (!doisJogadores && vencedor == LadoLutador.JOGADOR) {
             inc("pontos", 100);
             progresso.registarVitoria();
         }
-        String mensagem = "Venceu " + vencedor.name() + ". Pontos: " + comPontos();
+        String mensagem = doisJogadores ? "Venceu o JOGADOR " + (vencedor == LadoLutador.JOGADOR ? "1" : "2") + "!"
+                : "Venceu " + vencedor.name() + ". Pontos: " + comPontos();
         ComponenteLutador lutadorVencedor = lutadores.get(vencedor);
         lutadorVencedor.celebrarVitoria();
         double duracao = animacoes.get(AcaoCombate.VICTORY).frames().stream()
@@ -285,10 +333,9 @@ public final class GestorCombate {
     }
 
     private void criarLutador(LadoLutador lado, double x) {
-        Entity entidade = spawn("lutador", new SpawnData(x, 340)
+        spawn("lutador", new SpawnData(x, ComponenteLutador.CHAO_Y)
                 .put("lado", lado)
                 .put("gestor", this));
-        entidade.setY(340);
     }
 
     private CaixaFrame encontrarContacto(ComponenteLutador atacante, ComponenteLutador alvo) {
@@ -311,7 +358,7 @@ public final class GestorCombate {
         alvo.aplicarRecuo(reacao.velocidadeRecuo(), reacao.recuoFrames());
 
         mostrarFrameAdvantage(atacante, resultado, contacto.recuperacao());
-        if (atacante.lado() == LadoLutador.JOGADOR) {
+        if (!doisJogadores && atacante.lado() == LadoLutador.JOGADOR) {
             inc("pontos", resultado.bloqueado() ? 5 : resultado.danoAplicado());
         }
     }
@@ -332,7 +379,7 @@ public final class GestorCombate {
     private void mostrarFrameAdvantage(ComponenteLutador atacante, ResultadoImpacto impacto, int recuperacao) {
         int vantagem = impacto.stunFrames() - recuperacao;
         String sinal = vantagem >= 0 ? "+" : "";
-        String origem = atacante.lado() == LadoLutador.JOGADOR ? "P1" : "CPU";
+        String origem = atacante.lado() == LadoLutador.JOGADOR ? "P1" : doisJogadores ? "P2" : "CPU";
         String resultado = impacto.quebraGuarda()
                 ? "GUARD BREAK"
                 : impacto.bloqueado() ? "ON BLOCK" : "ON HIT";
@@ -355,6 +402,11 @@ public final class GestorCombate {
     }
 
     private void mostrarFim(String mensagem) {
+        if (doisJogadores) {
+            showMessage(mensagem + "\nNova partida com os mesmos controlos.",
+                    () -> getGameController().startNewGame());
+            return;
+        }
         try {
             List<Pontuacao> top = recordes.acrescentar(new Pontuacao("Jogador", comPontos(), LocalDate.now()));
             showMessage(mensagem + "\nTop 1: " + top.getFirst().nome(),

@@ -2,7 +2,6 @@ package pt.aepombal.tpi.ruinas;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
-import com.almasb.fxgl.input.UserAction;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import pt.aepombal.tpi.ruinas.componentes.ComponenteLutador;
@@ -11,6 +10,7 @@ import pt.aepombal.tpi.ruinas.modelo.AcaoCombate;
 import pt.aepombal.tpi.ruinas.modelo.DadosCombateException;
 import pt.aepombal.tpi.ruinas.modelo.RepositorioFrames;
 import pt.aepombal.tpi.ruinas.modelo.ProgressoCombate;
+import pt.aepombal.tpi.ruinas.modelo.LadoLutador;
 
 import java.nio.file.Path;
 import java.util.Map;
@@ -25,12 +25,19 @@ public final class StreetFrameApp extends GameApplication {
 
     private GestorCombate gestor;
     private final ProgressoCombate progresso = new ProgressoCombate();
-    private boolean esquerdaPremida;
-    private boolean direitaPremida;
-    private boolean baixoPremido;
-    private boolean cimaPremida;
-    private int botoesComando;
-    private final ComandoWindows comando = new ComandoWindows();
+    private static StreetFrameApp instancia;
+    private final EntradasPartida entradas = new EntradasPartida();
+    private final int[] anteriores = new int[2];
+    private boolean sincronizar = true;
+
+    public StreetFrameApp() { instancia = this; }
+    static StreetFrameApp instancia() { return instancia; }
+
+    void aplicarPersonagens() {
+        if (gestor == null) return;
+        gestor.trocarPersonagem(LadoLutador.JOGADOR, ConfiguracaoPartida.ATUAL.personagem(0));
+        gestor.trocarPersonagem(LadoLutador.OPONENTE, ConfiguracaoPartida.ATUAL.personagem(1));
+    }
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -41,6 +48,8 @@ public final class StreetFrameApp extends GameApplication {
         settings.setMainMenuEnabled(true);
         settings.setCloseConfirmation(false);
         settings.setFullScreenAllowed(true);
+        settings.setFullScreenFromStart(true);
+        settings.addEngineService(ServicoControlos.class);
         settings.setSceneFactory(new com.almasb.fxgl.app.scene.SceneFactory() {
             @Override
             public com.almasb.fxgl.app.scene.FXGLMenu newMainMenu() {
@@ -75,30 +84,15 @@ public final class StreetFrameApp extends GameApplication {
 
     @Override
     protected void initInput() {
-        ligarMovimento("Esquerda", KeyCode.A, false);
-        ligarMovimento("Direita", KeyCode.D, true);
-        getInput().addAction(new UserAction("Saltar") {
-            @Override protected void onActionBegin() { cimaPremida = true; atualizarSaltoPremido(); }
-            @Override protected void onActionEnd() { cimaPremida = false; }
-        }, KeyCode.W);
-        ligarAcao("Provocação", KeyCode.T, () -> gestor.provocarJogador());
-        getInput().addAction(new UserAction("Baixo") {
-            @Override protected void onActionBegin() { baixoPremido = true; atualizarBaixo(); }
-            @Override protected void onActionEnd() { baixoPremido = false; atualizarBaixo(); }
-        }, KeyCode.S);
-        // Também recebe as libertações diretamente, incluindo combinações de teclas.
-        getInput().addEventFilter(javafx.scene.input.KeyEvent.KEY_RELEASED, evento -> {
-            switch (evento.getCode()) {
-                case A -> { esquerdaPremida = false; atualizarMovimentoPremido(); }
-                case D -> { direitaPremida = false; atualizarMovimentoPremido(); }
-                case S -> { baixoPremido = false; atualizarBaixo(); }
-                case W -> cimaPremida = false;
-                default -> { }
+        getInput().addEventHandler(javafx.scene.input.KeyEvent.KEY_PRESSED, evento -> {
+            if (entradas.premir(evento.getCode()) && gestor != null
+                    && (evento.getCode() == KeyCode.F3 || evento.getCode() == KeyCode.H)) {
+                gestor.alternarDepuracao();
             }
         });
-        ligarAcao("Depuração de hitboxes", KeyCode.F3, () -> gestor.alternarDepuracao());
-        ligarAcao("Caixas (alternativa)", KeyCode.H, () -> gestor.alternarDepuracao());
-        ligarAtaques();
+        getInput().addEventFilter(javafx.scene.input.KeyEvent.KEY_RELEASED, evento -> {
+            entradas.libertar(evento.getCode());
+        });
     }
 
     @Override
@@ -106,43 +100,44 @@ public final class StreetFrameApp extends GameApplication {
         gestor = criarGestor();
         getGameWorld().addEntityFactory(new FabricaEntidades(gestor));
         gestor.criarMundo();
-        esquerdaPremida = direitaPremida = baixoPremido = cimaPremida = false;
-        comando.iniciar();
-        botoesComando = 0;
+        limparTeclado();
     }
 
     @Override
     protected void onUpdate(double tpf) {
         if (gestor == null) return;
-        int atual = comando.botoes();
-        int novos = atual & ~botoesComando;
-        boolean mudou = atual != botoesComando;
-        botoesComando = atual;
-        if (mudou) {
-            atualizarMovimentoPremido();
-            atualizarBaixo();
+        var comandos = com.almasb.fxgl.dsl.FXGL.getService(ServicoControlos.class);
+        var config = ConfiguracaoPartida.ATUAL;
+        for (int i = 0; i < (gestor.doisJogadores() ? 2 : 1); i++) {
+            int atual = entradas.botoes(config, i, comandos.botoes(0), comandos.botoes(1));
+            int novos = sincronizar ? 0 : atual & ~anteriores[i];
+            anteriores[i] = atual;
+            if ((novos & 0x10) != 0) {
+                com.almasb.fxgl.dsl.FXGL.getGameController().gotoGameMenu();
+                return;
+            }
+            aplicarEntrada(i == 0 ? LadoLutador.JOGADOR : LadoLutador.OPONENTE, atual, novos);
         }
-        atualizarSaltoPremido();
-        if ((novos & 0x4000) != 0) gestor.atacarJogador(AcaoCombate.LP); // X
-        if ((novos & 0x8000) != 0) gestor.atacarJogador(AcaoCombate.MP); // Y
-        if ((novos & 0x0200) != 0) gestor.atacarJogador(AcaoCombate.HP); // RB
-        if ((novos & 0x1000) != 0) gestor.atacarJogador(AcaoCombate.LK); // A
-        if ((novos & 0x2000) != 0) gestor.atacarJogador(AcaoCombate.MK); // B
-        if ((novos & 0x0100) != 0) gestor.atacarJogador(AcaoCombate.HK); // LB
-        if ((novos & 0x0020) != 0) gestor.provocarJogador(); // View/Back
+        sincronizar = false;
         gestor.atualizar(tpf);
     }
 
-    private void atualizarBaixo() {
-        if (gestor != null) gestor.baixoJogador(baixoPremido || (botoesComando & 2) != 0);
+    private void aplicarEntrada(LadoLutador lado, int botoes, int novos) {
+        gestor.moverHumano(lado, EntradasPartida.direcao(botoes));
+        gestor.baixoHumano(lado, (botoes & 2) != 0);
+        if (EntradasPartida.saltar(botoes)) gestor.saltarHumano(lado, EntradasPartida.direcao(botoes));
+        if ((novos & 0x4000) != 0) gestor.atacarHumano(lado, AcaoCombate.LP);
+        if ((novos & 0x8000) != 0) gestor.atacarHumano(lado, AcaoCombate.MP);
+        if ((novos & 0x0200) != 0) gestor.atacarHumano(lado, AcaoCombate.HP);
+        if ((novos & 0x1000) != 0) gestor.atacarHumano(lado, AcaoCombate.LK);
+        if ((novos & 0x2000) != 0) gestor.atacarHumano(lado, AcaoCombate.MK);
+        if ((novos & 0x0100) != 0) gestor.atacarHumano(lado, AcaoCombate.HK);
+        if ((novos & 0x0020) != 0) gestor.provocarHumano(lado);
     }
 
-    private void atualizarSaltoPremido() {
-        if (gestor == null) return;
-        boolean cima = cimaPremida || (botoesComando & 1) != 0;
-        boolean baixo = baixoPremido || (botoesComando & 2) != 0;
-        // Cima+baixo neutraliza; manter cima repete o salto assim que a recuperação acaba.
-        if (cima && !baixo) gestor.saltarJogador(direcaoSalto());
+    void limparTeclado() {
+        entradas.limpar();
+        sincronizar = true;
     }
 
     @Override
@@ -154,67 +149,11 @@ public final class StreetFrameApp extends GameApplication {
     private GestorCombate criarGestor() {
         try {
             var animacoes = new RepositorioFrames().carregar(Path.of("dados", "frames.csv"));
-            return new GestorCombate(animacoes, Path.of("dados", "recordes.csv"), progresso);
+            return new GestorCombate(animacoes, Path.of("dados", "recordes.csv"), progresso,
+                    ConfiguracaoPartida.ATUAL.versus());
         } catch (DadosCombateException e) {
             throw new IllegalStateException("Não foi possível iniciar os dados de combate.", e);
         }
-    }
-
-    private void ligarMovimento(String nome, KeyCode tecla, boolean paraDireita) {
-        getInput().addAction(new UserAction(nome) {
-            @Override protected void onActionBegin() {
-                if (paraDireita) {
-                    direitaPremida = true;
-                } else {
-                    esquerdaPremida = true;
-                }
-                atualizarMovimentoPremido();
-            }
-
-            @Override protected void onActionEnd() {
-                if (paraDireita) {
-                    direitaPremida = false;
-                } else {
-                    esquerdaPremida = false;
-                }
-                atualizarMovimentoPremido();
-            }
-        }, tecla);
-    }
-
-    private void ligarAcao(String nome, KeyCode tecla, Runnable acao) {
-        getInput().addAction(new UserAction(nome) {
-            @Override protected void onActionBegin() {
-                acao.run();
-            }
-        }, tecla);
-    }
-
-    private void ligarAtaques() {
-        ligarAcao("LP", KeyCode.U, () -> gestor.atacarJogador(AcaoCombate.LP));
-        ligarAcao("MP", KeyCode.I, () -> gestor.atacarJogador(AcaoCombate.MP));
-        ligarAcao("HP", KeyCode.O, () -> gestor.atacarJogador(AcaoCombate.HP));
-        ligarAcao("LK", KeyCode.J, () -> gestor.atacarJogador(AcaoCombate.LK));
-        ligarAcao("MK", KeyCode.K, () -> gestor.atacarJogador(AcaoCombate.MK));
-        ligarAcao("HK", KeyCode.L, () -> gestor.atacarJogador(AcaoCombate.HK));
-    }
-
-    private void atualizarMovimentoPremido() {
-        if (gestor == null) return;
-        boolean esquerda = esquerdaPremida || (botoesComando & 4) != 0;
-        boolean direita = direitaPremida || (botoesComando & 8) != 0;
-        if (direita == esquerda) {
-            gestor.pararJogador();
-        } else if (direita) {
-            gestor.moverJogadorParaDireita();
-        } else {
-            gestor.moverJogadorParaEsquerda();
-        }
-    }
-
-    private int direcaoSalto() {
-        return ((direitaPremida || (botoesComando & 8) != 0) ? 1 : 0)
-                - ((esquerdaPremida || (botoesComando & 4) != 0) ? 1 : 0);
     }
 
     private Pane criarHudArcade() {

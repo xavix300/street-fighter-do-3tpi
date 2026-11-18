@@ -59,6 +59,8 @@ final class PainelMenu extends StackPane {
             if (evento.getCode() == KeyCode.ESCAPE) {
                 fechar();
                 evento.consume();
+            } else if (NavegacaoMenu.tecla(this, evento.getCode())) {
+                evento.consume();
             }
         });
         Platform.runLater(voltar::requestFocus);
@@ -68,6 +70,22 @@ final class PainelMenu extends StackPane {
         PainelMenu painel = new PainelMenu(titulo, () -> destino.requestFocus());
         painel.corpo.getChildren().add(label(mensagem, 17, "#D9F4FF"));
         destino.getChildren().add(painel);
+    }
+
+    static void personagens(Pane destino) {
+        personagens(destino, () -> { });
+    }
+
+    static void personagens(Pane destino, Runnable aoAlterar) {
+        PainelMenu painel = new PainelMenu("PERSONAGENS", () -> destino.requestFocus());
+        VBox cartao = (VBox) painel.getChildren().getFirst();
+        cartao.setSpacing(6);
+        cartao.setPadding(new Insets(12, 36, 12, 36));
+        cartao.setMaxSize(860, 520);
+        SeletorPersonagens seletor = new SeletorPersonagens(ConfiguracaoPartida.ATUAL, aoAlterar);
+        painel.corpo.getChildren().add(seletor);
+        destino.getChildren().add(painel);
+        Platform.runLater(seletor::focarPrimeiro);
     }
 
     static void confirmar(Pane destino, String titulo, String mensagem, Runnable acao) {
@@ -94,6 +112,62 @@ final class PainelMenu extends StackPane {
         destino.getChildren().add(painel);
     }
 
+    static void escolherPartida(Pane destino, Runnable iniciar) {
+        PainelMenu painel = new PainelMenu("JOGAR", () -> destino.requestFocus());
+        VBox cartao = (VBox) painel.getChildren().getFirst();
+        cartao.setSpacing(8);
+        cartao.setPadding(new Insets(16, 36, 16, 36));
+        cartao.setMaxSize(860, 520);
+        ConfiguracaoPartida config = ConfiguracaoPartida.ATUAL;
+        Button modo = botao("", () -> { });
+        Button p1 = botao("", () -> { });
+        Button p2 = botao("", () -> { });
+        Label ajuda = label("", 13, "#9DC8EC");
+        Runnable atualizar = () -> {
+            modo.setText(config.versus() ? "MODO: 2 JOGADORES — VERSUS LOCAL" : "MODO: 1 JOGADOR — CONTRA CPU");
+            p1.setText("P1: " + config.descricao(0));
+            p2.setText("P2: " + (config.versus() ? config.descricao(1) : "CPU"));
+            p1.setDisable(!config.versus());
+            p2.setDisable(!config.versus());
+            ajuda.setText(config.versus()
+                    ? "Seleciona cada linha para mudar a fonte. Teclado 2: setas, Num 789 / 456 e Num 0.\n"
+                        + "Dois teclados usam teclas diferentes. Ativa Num Lock. Comandos: A/Cruz confirma, B/Círculo volta."
+                    : "WASD + UIO / JKL ou Comando 1. Start/Options abre a pausa.\n"
+                        + "Seleciona MODO para jogar contra outra pessoa.");
+        };
+        modo.setOnAction(e -> { config.alternarModo(); atualizar.run(); });
+        p1.setOnAction(e -> { config.seguinteFonte(0); atualizar.run(); });
+        p2.setOnAction(e -> { config.seguinteFonte(1); atualizar.run(); });
+        Button jogar = botao("INICIAR COMBATE", () -> {
+            if (config.versus()) {
+                ServicoControlos comandos = FXGL.getService(ServicoControlos.class);
+                for (int i = 0; i < 2; i++) {
+                    var fonte = config.fonte(i);
+                    int indice = fonte == ConfiguracaoPartida.Fonte.COMANDO_1 ? 0 : 1;
+                    if ((fonte == ConfiguracaoPartida.Fonte.COMANDO_1
+                            || fonte == ConfiguracaoPartida.Fonte.COMANDO_2) && !comandos.ligado(indice)) {
+                        ajuda.setText("Liga o " + fonte.nome + " ou escolhe um teclado antes de iniciar.");
+                        return;
+                    }
+                }
+            }
+            painel.fechar();
+            iniciar.run();
+        });
+        for (Button botao : new Button[]{modo, p1, p2, jogar}) {
+            botao.getStyleClass().add("botao-compacto");
+            botao.setMinHeight(40);
+            botao.setPrefHeight(40);
+            botao.setMaxHeight(40);
+            pintarBotao(botao);
+        }
+        painel.corpo.setSpacing(8);
+        painel.corpo.getChildren().addAll(modo, p1, p2, ajuda, jogar);
+        atualizar.run();
+        destino.getChildren().add(painel);
+        Platform.runLater(modo::requestFocus);
+    }
+
     private void selecionar(int indice, Button[] tabs, VBox conteudo) {
         for (int i = 0; i < tabs.length; i++) {
             tabs[i].setUserData(i == indice);
@@ -107,16 +181,15 @@ final class PainelMenu extends StackPane {
                         linha("W  /  S", "Saltar / agachar · S + recuar: defesa baixa"),
                         linha("U I O  /  J K L", "Socos / pontapés (leve, médio, forte)"),
                         linha("T  /  F3 ou H  /  ESC", "Provocação / caixas de combate / pausa"),
-                        label("Comando XInput: direcional para mover · X/Y/RB socos · A/B/LB pontapés.", 12, "#9DC8EC"));
+                        label("Xbox: direcional · X/Y/RB socos · A/B/LB pontapés.", 12, "#9DC8EC"),
+                         label("PS5: direcional · Quadrado/Triângulo/R1 socos · Cruz/Círculo/L1 pontapés.", 12, "#9DC8EC"));
             }
             case 1 -> {
                 CheckBox ecra = new CheckBox("Ecrã inteiro");
                 ecra.setStyle("-fx-text-fill: white; -fx-font-size: 17px;");
-                Platform.runLater(() -> {
-                    if (getScene() != null && getScene().getWindow() instanceof Stage stage) {
-                        ecra.setSelected(stage.isFullScreen());
-                    }
-                });
+                if (getScene() != null && getScene().getWindow() instanceof Stage stage) {
+                    ecra.setSelected(stage.isFullScreen());
+                }
                 ecra.setOnAction(e -> {
                     if (getScene().getWindow() instanceof Stage stage) stage.setFullScreen(ecra.isSelected());
                 });
@@ -178,7 +251,10 @@ final class PainelMenu extends StackPane {
 
     private static void pintarBotao(Button botao) {
         boolean ativo = Boolean.TRUE.equals(botao.getUserData()) || botao.isHover() || botao.isFocused();
-        botao.setStyle(CSS_BOTAO + (ativo
+        // O padding inline prevalece sobre setPadding: manter a variante compacta
+        // também quando foco/hover voltam a aplicar o estilo.
+        String compacto = botao.getStyleClass().contains("botao-compacto") ? "-fx-padding: 6 20; " : "";
+        botao.setStyle(CSS_BOTAO + compacto + (ativo
                 ? "-fx-background-color: linear-gradient(to bottom, #F6943B, #B94A0B, #DC6314); "
                     + "-fx-border-color: #FFD1A1; -fx-border-width: 2; "
                     + "-fx-effect: dropshadow(gaussian, #FF8A2499, 13, 0.25, 0, 0);"
@@ -193,6 +269,13 @@ final class PainelMenu extends StackPane {
     static void fecharAtual(Pane destino) {
         destino.getChildren().stream().filter(PainelMenu.class::isInstance)
                 .map(PainelMenu.class::cast).findFirst().ifPresent(PainelMenu::fechar);
+    }
+
+    static boolean comandoAtual(Pane destino, int botoes) {
+        var painel = destino.getChildren().stream().filter(PainelMenu.class::isInstance)
+                .map(PainelMenu.class::cast).findFirst();
+        painel.ifPresent(p -> NavegacaoMenu.comando(p, botoes, p::fechar));
+        return painel.isPresent();
     }
 
     private void fechar() {
